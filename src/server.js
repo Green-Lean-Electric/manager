@@ -7,4 +7,6 @@ const port = require('../../utils/src/configuration.js')
 
 const routes = {};
 
-server.createServer(routes, port);
+const staticFiles = {};
+
+server.createServer(__dirname, staticFiles, routes, port);
