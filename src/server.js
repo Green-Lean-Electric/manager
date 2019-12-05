@@ -1,10 +1,12 @@
-const server = require('../../utils/src/server.js');
+const server = require('../../utils/src/server');
 
-const port = require('../../utils/src/configuration.js')
+const port = require('../../utils/src/configuration')
     .serversConfiguration
     .manager
     .port;
 
 const routes = {};
 
-server.createServer(routes, port);
+const staticFiles = {};
+
+server.createServer(staticFiles, routes, port);
