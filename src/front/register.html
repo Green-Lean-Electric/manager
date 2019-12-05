@@ -78,69 +78,12 @@
 
         <script src="js/green-lean-electrics.js"></script>
 
-        <!--script>
-            function validateForm() {
-                var email = document.registerform.email.value;
-                var pwd = document.registerform.password.value;
-                var repeatpwd = document.registerform.repeatpassword.value;
-
-
-                if(checkPassword(pwd) && pwd === repeatpwd){
-                    blockView();
-                    const data = {
-                        email: email, 
-                        password: pwd,
-                        bufferSize: 10,
-                        bufferFilling: 0,
-                        productionRatioBuffer : 0.7,
-                        productionRatioMarket : 0.3,
-                        consumptionRatioBuffer : 0.8,
-                        consumptionRatioMarket : 0.2
-                    };
-                    // call API
-                    $.ajax({
-                        type: 'POST',
-                        url: '/managerSignUp',
-                        dataType: 'json',
-                        contentType: 'application/json',
-                        data: JSON.stringify(data),
-                        success: function(response){
-                            unblockView();
-                            if(response.hasOwnProperty("error")){
-                                Templates.Modals.displayModal(createMessageModal("Error",response.error, "signUpErrorModal"));
-                                return false;
-                            } else {
-                                Templates.Modals.displayModal(Templates.Modals.createModal(
-                                    "Welcome !",
-                                    "Well registered, now check your mailbox to activate your account!",
-                                    "signUpSuccessModal",
-                                    [
-                                        ['Ok', () => location.assign('/')]
-                                    ],
-                                    () => location.assign('/')
-                                ));
-                            }
-                        }
-                    });
-                } else {
-                    Templates.Modals.displayModal(createMessageModal("Error","Registration was unsuccessful, please check your email and password. (Your password must have between 6 to 20 characters which contain at least one numeric digit, one uppercase and one lowercase letter !)", "signUpWrongDatasModal"));
-                }
-            }
-
-            function checkPassword(pwd) { 
-                var passw = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;
-                if(pwd.match(passw)) { 
-                    return true;
-                } else { 
-                    return false;
-                }
-            }
-
+        <script>
             $('#registerform').submit(function () {
-                validateForm();
+                sendRegisterForm("manager");
                 return false;
             });
-        </script-->
+        </script>
     </body>
 
 </html>

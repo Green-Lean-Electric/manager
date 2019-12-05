@@ -483,12 +483,17 @@
 
 <script src="js/green-lean-electrics.js"></script>
 
-<!--script>
-    Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
-    Chart.defaults.global.defaultFontColor = '#858796';
+<script>
+    // Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+    // Chart.defaults.global.defaultFontColor = '#858796';
 
     $(document).ready(function () {
-        initModals();
+
+        $('#logout').on('click', function () {
+            sendLogoutForm("manager");
+        });
+
+        /*initModals();
 
         sendRequests();
 
@@ -502,18 +507,6 @@
             if (!isPopUp)
                 sendRequests();
         }, 10000);
-
-        $('#logout').on('click', function () {
-            $.ajax({
-                type: 'GET',
-                url: '/managerLogout?token=' + window.localStorage.getItem('token'),
-                dataType: 'json',
-                contentType: 'application/json',
-                success: function () {
-                    Templates.Modals.displayModal($('#loggedOutModal'));
-                }
-            });
-        });
 
         $('#newPicture').change(function () {
             var i = $(this).prev('label').clone();
@@ -909,9 +902,9 @@
                 retrieveProfilePicture();
             },
         });
-    }
+    }*/
 
-</script-->
+</script>
 
 </body>
 
