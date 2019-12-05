@@ -493,7 +493,7 @@
             sendLogoutForm("manager");
         });
 
-        /*initModals();
+        initModals();
 
         sendRequests();
 
@@ -508,7 +508,7 @@
                 sendRequests();
         }, 10000);
 
-        $('#newPicture').change(function () {
+        /*$('#newPicture').change(function () {
             var i = $(this).prev('label').clone();
             var file = $('#newPicture')[0].files[0].name;
             $(this).prev('label').text(file);
@@ -582,20 +582,20 @@
             return false;
         });
 
-        retrieveProfilePicture();
+        retrieveProfilePicture();*/
     });
 
     function sendRequests() {
         $.when(
-            getProsumerLogged(),
-            getProsumerElectricityConsumption(),
-            getWindSpeed(),
-            getCurrentElectricityPrice(),
-            getElectricityProduction()
-        ).done(function (prosumer, electricityConsumption, windSpeed, electricityPrice, electricityProduction) {
-            console.log(prosumer);
+            getManagerLogged(),
+            //getProsumerElectricityConsumption(),
+            //getWindSpeed(),
+            //getCurrentElectricityPrice(),
+            //getElectricityProduction()
+        ).done(function (manager){//, electricityConsumption, windSpeed, electricityPrice, electricityProduction) {
+            console.log(manager);
 
-            var currentBufferFilling = round(('bufferFilling' in prosumer[0] ? prosumer[0].bufferFilling : 0));
+            /*var currentBufferFilling = round(('bufferFilling' in prosumer[0] ? prosumer[0].bufferFilling : 0));
             $('#bufferFilling').html(currentBufferFilling);
             $("#bufferFillingBar").width(currentBufferFilling + "%");
 
@@ -642,27 +642,27 @@
                         return false;
                     }
                 }
-            });
+            });*/
 
         });
     }
 
-    function getProsumerLogged() {
+    function getManagerLogged() {
         return $.ajax({
             method: 'GET',
-            url: '/getProsumerLogged?token=' + window.localStorage.getItem('token'),
+            url: '/getManagerLogged?token=' + window.localStorage.getItem('token'),
             dataType: 'json',
-            success: function (prosumer) {
-                if ($.isEmptyObject(prosumer)) {
+            success: function (manager) {
+                if ($.isEmptyObject(manager)) {
                     window.location = "index.html";
                 } else {
-                    $('#accountTitle').html("Dashboard - " + prosumer.email);
+                    $('#accountTitle').html("Dashboard - " + manager.email);
                 }
             }
         });
     }
 
-    function getProsumerElectricityConsumption() {
+    /*function getProsumerElectricityConsumption() {
         return $.ajax({
             method: 'GET',
             url: '/getProsumerElectricityConsumption?token=' + window.localStorage.getItem('token'),
@@ -841,16 +841,16 @@
             unblockView();
         });
         housePicture.attr("src", `/retrievePicture?token=${window.localStorage.getItem('token')}&date=${new Date().getTime()}`);
-    }
+    }*/
 
     function initModals() {
-        const modalsCreationFunctions = [createUploadPictureModal, createLoggedOutModal, createMessageModal];
+        const modalsCreationFunctions = [/*createUploadPictureModal,*/ createLoggedOutModal, createMessageModal];
         for (const modalCreationFunction of modalsCreationFunctions) {
             $('body').append(modalCreationFunction());
         }
     }
 
-    function createUploadPictureModal() {
+    /*function createUploadPictureModal() {
         const body = `
                 <form method="post" enctype="multipart/form-data">
                     <div class="custom-file">
@@ -867,7 +867,7 @@
                 ['Cancel', () => {}],
                 ['Validate', sendPicture]
             ]);
-    }
+    }*/
 
     function createLoggedOutModal() {
         return Templates.Modals.createModal(
@@ -881,7 +881,7 @@
         );
     }
 
-    function sendPicture() {
+    /*function sendPicture() {
         blockView();
 
         const fd = new FormData();

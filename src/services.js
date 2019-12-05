@@ -22,7 +22,7 @@ exports.insertManager = function (data) {
     const databaseName = DATABASE_NAME;
     const collectionName = 'managers';
     data.password = hashPassword(data.password);
-
+console.log(data);
     var registrationToken = generateToken();
     data.registrationToken = registrationToken;
 
