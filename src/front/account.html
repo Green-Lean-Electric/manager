@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Manager Account</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+          rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+
+    <link href="css/green-lean-electrics.css" rel="stylesheet">
+
+</head>
+
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper" style="height: 100%;min-height: 100vh;">
+
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-success sidebar sidebar-dark accordion" id="accordionSidebar">
+
+          <!-- Sidebar - Brand -->
+          <a class="sidebar-brand d-flex align-items-center justify-content-center" href="home.html">
+            <div class="sidebar-brand-icon rotate-n-15">
+                <i class="fas fa-bolt"></i>
+            </div>
+            <div class="sidebar-brand-text mx-3">Manager Account</div>
+          </a>
+
+          <!-- Divider -->
+          <hr class="sidebar-divider my-0">
+
+          <!-- Nav Item - Dashboard -->
+          <li class="nav-item active">
+            <a class="nav-link" href="home.html">
+              <i class="fas fa-fw fa-tachometer-alt"></i>
+              <span>Dashboard</span></a>
+          </li>
+
+          <li class="nav-item active">
+            <a class="nav-link" href="account.html">
+              <i class="fas fa-fw fa-user-circle"></i>
+              <span>Your account</span></a>
+          </li>
+
+          <li class="nav-item active">
+            <a class="nav-link" href="prosumers.html">
+              <i class="fas fa-fw fa-users"></i>
+              <span>Prosumers</span></a>
+          </li>
+
+          <!-- Divider -->
+          <hr class="sidebar-divider d-none d-md-block">
+
+          <!-- Sidebar Toggler (Sidebar) -->
+          <div class="text-center d-none d-md-inline">
+            <button class="rounded-circle border-0" id="sidebarToggle"></button>
+          </div>
+
+        </ul>
+        <!-- End of Sidebar -->
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                    
+                    <!-- Topbar Navbar -->
+                    <ul class="navbar-nav ml-auto">
+
+                        <div class="topbar-divider d-none d-sm-block"></div>
+
+                        <!-- Nav Item - User Information -->
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" data-target="#logoutModal" role="button"
+                               data-toggle="modal" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                Logout
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </nav>
+                <!-- End of Topbar -->
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 id="accountTitle" class="h3 mb-0 text-gray-800">Your Account</h1>
+                    </div>
+
+                    <!-- Content Row -->
+                    <div class="row">
+
+                        <div class="col-xl-6 col-md-6 mb-4">
+                            <div class="row">
+                                <div class="col-xl-12 col-md-12 mb-4">
+                                    <div class="card shadow">
+                                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                            <h6 class="m-0 font-weight-bold text-success">Your Credentials</h6>
+                                            <div id="credentialsMenu" class="dropdown no-arrow">
+                                                <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                                                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                                                </a>
+                                                <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                                                     aria-labelledby="dropdownMenuLink">
+                                                    <div class="dropdown-header">Credentials :</div>
+                                                    <a class="dropdown-item" href="#"  role="button" onclick="editCredentials()" >Edit</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <form id="credentialsform" method="post">
+                                                <div class="form-group row">
+                                                    <label for="staticEmail" class="col-sm-2 col-form-label">Email</label>
+                                                    <div class="col-sm-10">
+                                                      <input type="text" readonly class="form-control-plaintext" id="staticEmail">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label for="staticFirstname" class="col-sm-2 col-form-label">Firstname</label>
+                                                    <div class="col-sm-10">
+                                                      <input type="text" readonly class="form-control-plaintext" id="staticFirstname" >
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label for="staticLastname" class="col-sm-2 col-form-label">Lastname</label>
+                                                    <div class="col-sm-10">
+                                                      <input type="text" readonly class="form-control-plaintext" id="staticLastname">
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer" style="display: none;">
+                                                    <input class="btn btn-success btn-user btn-block" style="width: fit-content;" type="submit" value="Validate">
+                                                    <button class="btn btn-secondary" type="button" onclick="closeCredentialsForm()">Cancel</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-12 col-md-12 mb-4">
+                                    <div class="card shadow">
+                                        <a onclick="deleteAccount()" class="btn btn-danger btn-icon-split" style="color: #fff; cursor: pointer;">
+                                            <span class="icon text-white-50" style="background: transparent;">
+                                                <i class="fas fa-trash"></i>
+                                            </span>
+                                            <span class="text">Delete Account</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-6 col-md-6">
+                            <!-- Picture -->
+                            <div class="card shadow">
+                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-success">Your Picture</h6>
+                                    <div class="dropdown no-arrow">
+                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                                             aria-labelledby="dropdownMenuLink">
+                                            <div class="dropdown-header">Picture :</div>
+                                            <a class="dropdown-item" href="#" data-target="#editPictureModal" role="button"
+                                               data-toggle="modal">Edit</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="text-center">
+                                        <img id="housePicture" class="img-fluid px-3 px-sm-4 mt-3 mb-4"
+                                             style="width: 25rem;" src="" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ./End Content Row -->
+                    </div>
+
+                </div>
+                <!-- /.container-fluid -->
+
+            </div>
+            <!-- End of Main Content -->
+
+        </div>
+        <!-- End of Content Wrapper -->
+
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-success" id="logout" data-dismiss="modal" style="color: #fff;cursor:pointer;">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="js/sb-admin-2.min.js"></script>
+
+    <!-- Page level plugins -->
+    <script src="vendor/chart.js/Chart.min.js"></script>
+
+    <script src="js/green-lean-electrics.js"></script>
+
+    <script>
+
+        $(document).ready(function () {
+
+            $('#logout').on('click', function () {
+                sendLogoutForm("manager");
+            });
+
+            initModals();
+
+            sendRequests();
+
+            $('#newPicture').change(function () {
+                var i = $(this).prev('label').clone();
+                var file = $('#newPicture')[0].files[0].name;
+                $(this).prev('label').text(file);
+            });
+
+            $('#credentialsform').submit(function(){
+                 var data = {
+                    firstname: $('#staticFirstname').val(),
+                    lastname: $('#staticLastname').val(),
+                    token: window.localStorage.getItem('token')
+                };
+
+                $.ajax({
+                    method: 'POST',
+                    url: '/updateData',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function (response) {
+                        if (JSON.parse(response)) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                });
+            });
+
+            retrieveProfilePicture();
+        });
+
+        function editCredentials(){
+            $('#credentialsform .modal-footer').show();
+            $('#credentialsMenu').hide();
+            $("#credentialsform .form-group input").each(function(){
+                if($(this)[0].id != "staticEmail"){
+                    $(this).removeAttr("readonly");
+                    $(this).attr("class", "form-control");
+                }
+            });
+        }
+
+        function closeCredentialsForm(){
+            $('#credentialsform .modal-footer').hide();
+            $('#credentialsMenu').show();
+            $("#credentialsform .form-group input").each(function(){
+                if($(this)[0].id != "staticEmail"){
+                    $(this).attr("readonly");
+                    $(this).attr("class", "form-control-plaintext");
+                }
+            });
+
+            sendRequests();
+        }
+
+        function deleteAccount() {
+             var data = {
+                token: window.localStorage.getItem('token')
+            };
+
+            $.ajax({
+                    method: 'DELETE',
+                    url: '/deleteAccount',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function (response) {
+                        if (response) {
+                            Templates.Modals.displayModal($('#deleteAccountModal'));
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                });
+        }
+
+        function sendRequests() {
+            $.when(
+                getManagerLogged(),
+                //getProsumerElectricityConsumption(),
+                //getWindSpeed(),
+                //getCurrentElectricityPrice(),
+                //getElectricityProduction()
+            ).done(function (manager){//, electricityConsumption, windSpeed, electricityPrice, electricityProduction) {
+                console.log(manager);
+
+                $('#staticFirstname').val(manager.firstname);
+                $('#staticLastname').val(manager.lastname);
+                $('#staticEmail').val(manager.email);
+
+                /*var currentBufferFilling = round(('bufferFilling' in prosumer[0] ? prosumer[0].bufferFilling : 0));
+                $('#bufferFilling').html(currentBufferFilling);
+                $("#bufferFillingBar").width(currentBufferFilling + "%");
+
+                var netProduction = electricityProduction[0] - electricityConsumption[0].electricityConsumption;
+                $('#netProduction').html(round(netProduction) + " kwh");
+
+                var productionRatioBuffer = prosumer[0].productionRatioBuffer;
+                var productionRatioMarket = prosumer[0].productionRatioMarket;
+                var consumptionRatioBuffer = prosumer[0].consumptionRatioBuffer;
+                var consumptionRatioMarket = prosumer[0].consumptionRatioMarket;
+
+                $('#productionRatioBuffer').val(productionRatioBuffer * 100);
+                $('#productionRatioMarket').val(productionRatioMarket * 100);
+                $('#consumptionRatioBuffer').val(consumptionRatioBuffer * 100);
+                $('#consumptionRatioMarket').val(consumptionRatioMarket * 100);
+
+                $('#netProduction').html(round(netProduction) + " kwh");
+
+                var addToBuffer = drawProductionPieChart(productionRatioBuffer, productionRatioMarket, electricityConsumption[0].electricityConsumption, electricityProduction[0], netProduction);
+
+                var removeFromBuffer = drawConsumptionPieChart(consumptionRatioBuffer, consumptionRatioMarket, electricityConsumption[0].electricityConsumption, electricityProduction[0], netProduction);
+                console.log(addToBuffer);
+                console.log(removeFromBuffer);
+                var newBufferFilling = currentBufferFilling + addToBuffer - removeFromBuffer;
+                if (newBufferFilling > 100) {
+                    newBufferFilling == 100
+                }
+
+                var data = {
+                    bufferFilling: newBufferFilling,
+                    token: window.localStorage.getItem('token')
+                };
+
+                $.ajax({
+                    method: 'POST',
+                    url: '/updateData',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function (response) {
+                        if (JSON.parse(response)) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                });*/
+
+            });
+        }
+
+        function getManagerLogged() {
+            return $.ajax({
+                method: 'GET',
+                url: '/getManagerLogged?token=' + window.localStorage.getItem('token'),
+                dataType: 'json',
+                success: function (manager) {
+                    if ($.isEmptyObject(manager)) {
+                        window.location = "index.html";
+                    } else {
+                        $('#accountTitle').html("Your account - " + manager.email);
+                    }
+                }
+            });
+        }
+
+        function round(number) {
+            return (Math.round(number * 1000000) / 1000000);
+        }
+
+        function retrieveProfilePicture() {
+            blockView();
+            const housePicture = $("#housePicture");
+            housePicture.on('error', function() {
+                $(this).hide();
+                unblockView();
+            });
+            housePicture.on('load', function() {
+                $(this).show();
+                unblockView();
+            });
+            housePicture.attr("src", `/retrievePicture?token=${window.localStorage.getItem('token')}&date=${new Date().getTime()}`);
+        }
+
+        function initModals() {
+            const modalsCreationFunctions = [createUploadPictureModal, createLoggedOutModal, createMessageModal, createDeleteAccountModal];
+            for (const modalCreationFunction of modalsCreationFunctions) {
+                $('body').append(modalCreationFunction());
+            }
+        }
+
+        function createUploadPictureModal() {
+            const body = `
+                    <form method="post" enctype="multipart/form-data">
+                        <div class="custom-file">
+                            <label class="custom-file-label" for="newPicture">Choose file</label>
+                            <input type="file" class="custom-file-input" id="newPicture">
+                        </div>
+                    </form>
+            `;
+            return Templates.Modals.createModal(
+                'Change your house picture',
+                body,
+                'editPictureModal',
+                [
+                    ['Cancel', () => {}],
+                    ['Validate', sendPicture]
+                ]);
+        }
+
+        function createLoggedOutModal() {
+            return Templates.Modals.createModal(
+                'Log out',
+                'You are now logged out.',
+                'loggedOutModal',
+                [
+                    ['Ok', () => location.assign('/')]
+                ],
+                () => location.assign('/')
+            );
+        }
+
+        function createDeleteAccountModal() {
+            return Templates.Modals.createModal(
+                'Account Deleted',
+                'Your  account was well deleted.',
+                'deleteAccountModal',
+                [
+                    ['Ok', () => location.assign('/')]
+                ],
+                () => location.assign('/')
+            );
+        }
+
+        function sendPicture() {
+            blockView();
+
+            const fd = new FormData();
+
+            const file = $('#newPicture')[0].files[0];
+            fd.append('file', file, file.name);
+            fd.append('token', window.localStorage.getItem('token'));
+
+            $.ajax({
+                url: '/uploadPicture',
+                method: 'POST',
+                data: fd,
+                processData: false,
+                contentType: false,
+                success: function () {
+                    unblockView();
+                    Templates.Modals.displayModal(Templates.Modals.createModal('Picture uploaded', 'Your picture has been uploaded!', 'uploadedPictureModal', [['Close', () => {}]]));
+                    retrieveProfilePicture();
+                },
+            });
+        }
+
+    </script>
+
+</body>
+
+</html>

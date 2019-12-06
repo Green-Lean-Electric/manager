@@ -17,7 +17,8 @@ const routes = {
         '/retrievePicture': (request, parameters, res) => service.retrieveManagerPicturePath(parameters.token) //TODO same
             .then(path => server.serveStaticFile(path, res)),
         '/accountVerification': (request, parameters, res) => service.accountVerification(parameters.registrationToken)
-            .then(path => server.serveStaticFile(path, res))
+            .then(path => server.serveStaticFile(path, res)),
+        '/deleteAccount': (request, parameters) => service.deleteAccount(parameters.token)
     }
 ;
 

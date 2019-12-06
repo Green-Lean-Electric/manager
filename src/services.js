@@ -107,28 +107,34 @@ exports.connectManager = function (data) {
 exports.disconnectManager = function (token) {
     const databaseName = DATABASE_NAME;
     const collectionName = 'managers';
-    const prosumer = {
-        token
-    };
     const updateOperation = {$set: {token: null}};
 
     return database
-        .updateOne(databaseName, collectionName, prosumer, updateOperation)
+        .updateOne(databaseName, collectionName, {token}, updateOperation)
         .then(() => {
             console.log(`User connected with token '${token}' has been disconnected`);
             return token;
         });
 };
 
+exports.deleteAccount = function (token) {
+    const databaseName = DATABASE_NAME;
+    const collectionName = 'managers';
+
+    return database
+        .deleteOne(databaseName, collectionName, {token})
+        .then(() => {
+            console.log(`User deleted.`);
+            return true;
+        });
+}
+
 exports.getManagerLogged = function (token) {
     const databaseName = DATABASE_NAME;
     const collectionName = 'managers';
-    const prosumer = {
-        token
-    };
 
     return database
-        .find(databaseName, collectionName, prosumer)
+        .find(databaseName, collectionName, {token})
         .then((results) => {
             if (results.length === 1) {
                 delete results[0].password;
@@ -138,7 +144,6 @@ exports.getManagerLogged = function (token) {
             return {};
         });
 };
-
 
 exports.updateData = function (data) {
     const databaseName = DATABASE_NAME;
@@ -170,7 +175,6 @@ exports.updateData = function (data) {
             }
         });
 };
-
 
 exports.uploadManagerPicture = function (data, picturePath) {
     const databaseName = DATABASE_NAME;
