@@ -13,6 +13,9 @@ const routes = {
         '/managerLogout': (request, parameters) => service.disconnectManager(parameters.token),
         '/getManagerLogged': (request, parameters) => service.getManagerLogged(parameters.token),
         '/updateData': (request, parameters) => service.updateData(parameters),
+        '/uploadPicture': (_, [parameters, picturePath]) => service.uploadManagerPicture(parameters, picturePath), //TODO pu in utils ? common for prosuemr and manager
+        '/retrievePicture': (request, parameters, res) => service.retrieveManagerPicturePath(parameters.token) //TODO same
+            .then(path => server.serveStaticFile(path, res)),
         '/accountVerification': (request, parameters, res) => service.accountVerification(parameters.registrationToken)
             .then(path => server.serveStaticFile(path, res))
     }

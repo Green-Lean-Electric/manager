@@ -171,6 +171,43 @@ exports.updateData = function (data) {
         });
 };
 
+
+exports.uploadManagerPicture = function (data, picturePath) {
+    const databaseName = DATABASE_NAME;
+    const collectionName = 'managers';
+
+    const prosumer = {
+        token: data.token
+    };
+
+    const extension = server.findExtension(picturePath);
+    const newPath = configuration.uploadDirectory + new Date().getTime() + (
+        extension
+            ? '.' + extension
+            : ''
+    );
+
+    return server.moveFile(picturePath, newPath)
+        .then(() => database
+            .updateOne(databaseName, collectionName, prosumer, {$set: {picture: newPath}})
+            .then(() => server.readFile(newPath)));
+};
+
+exports.retrieveManagerPicturePath = function (token) {
+    const databaseName = DATABASE_NAME;
+    const collectionName = 'managers';
+    const prosumer = {
+        token
+    };
+
+    return database
+        .find(databaseName, collectionName, prosumer)
+        .then((results) => {
+            return results[0].picture;
+        })
+        .catch(() => {return undefined;});
+};
+
 function generateToken() {
     const crypto = require("crypto");
     return crypto.randomBytes(16).toString("hex");
