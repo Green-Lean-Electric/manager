@@ -12,6 +12,7 @@ const routes = {
         '/managerLogin': (request, parameters) => service.connectManager(parameters),
         '/managerLogout': (request, parameters) => service.disconnectManager(parameters.token),
         '/getManagerLogged': (request, parameters) => service.getManagerLogged(parameters.token),
+        '/updateData': (request, parameters) => service.updateData(parameters),
         '/accountVerification': (request, parameters, res) => service.accountVerification(parameters.registrationToken)
             .then(path => server.serveStaticFile(path, res))
     }

@@ -139,6 +139,38 @@ exports.getManagerLogged = function (token) {
         });
 };
 
+
+exports.updateData = function (data) {
+    const databaseName = DATABASE_NAME;
+    const collectionName = 'managers';
+
+    var token = data.token;
+    delete data.token;
+
+    var updateOperation;
+    if (data.length > 1)
+        updateOperation = {
+            $set: {
+                data
+            }
+        };
+    else
+        updateOperation = {
+            $set: data
+        };
+
+    return database
+        .updateOne(databaseName, collectionName, {token}, updateOperation)
+        .then((nModified) => {
+            if (nModified !== 0) {
+                return true;
+            } else {
+                console.log(`User not found or data already with the same values`);
+                return {};
+            }
+        });
+};
+
 function generateToken() {
     const crypto = require("crypto");
     return crypto.randomBytes(16).toString("hex");
