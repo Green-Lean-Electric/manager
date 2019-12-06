@@ -163,7 +163,7 @@ exports.updateData = function (data) {
         updateOperation = {
             $set: data
         };
-
+console.log(updateOperation);
     return database
         .updateOne(databaseName, collectionName, {token}, updateOperation)
         .then((nModified) => {
@@ -200,12 +200,9 @@ exports.uploadManagerPicture = function (data, picturePath) {
 exports.retrieveManagerPicturePath = function (token) {
     const databaseName = DATABASE_NAME;
     const collectionName = 'managers';
-    const prosumer = {
-        token
-    };
 
     return database
-        .find(databaseName, collectionName, prosumer)
+        .find(databaseName, collectionName, {token})
         .then((results) => {
             return results[0].picture;
         })
