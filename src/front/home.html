@@ -221,13 +221,13 @@
                                             <div class="row no-gutters align-items-center">
                                                 <div class="col mr-2">
                                                     <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                        Current Wind
+                                                        Current Production
                                                     </div>
-                                                    <div id="currentWind"
+                                                    <div id="currentProduction"
                                                          class="h5 mb-0 font-weight-bold text-gray-800"></div>
                                                 </div>
                                                 <div class="col-auto">
-                                                    <i class="fas fa-wind fa-2x text-gray-300"></i>
+                                                    <i class="fas fa-industry fa-2x text-gray-300"></i>
                                                 </div>
                                             </div>
                                         </div>
@@ -550,6 +550,7 @@
                         window.location = "index.html";
                     } else {
                         $('#accountTitle').html("Dashboard - " + manager.email);
+                        $('#currentProduction').html(manager.powerPlantProduction);
                         if(manager.powerPlantStatus == 0){
                             var status = "Stopped";
                             $('#stopPowerPlant').attr("disabled",true);
