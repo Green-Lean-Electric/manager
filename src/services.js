@@ -248,7 +248,7 @@ console.log(token);
                 })
                 .then(values => {
                     return values
-                        .map(([prosumer, consumption, production]) => (consumption - production) * prosumer.consumptionRatioMarket)
+                        .map(([prosumer, consumption, production]) => Math.max(0,(consumption - production) * prosumer.consumptionRatioMarket))
                         .reduce((a, b) => a + b, 0);
                 });
         });
