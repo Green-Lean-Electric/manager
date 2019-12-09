@@ -223,8 +223,12 @@
                                                     <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                                         Current Production
                                                     </div>
-                                                    <div id="currentProduction"
-                                                         class="h5 mb-0 font-weight-bold text-gray-800"></div>
+                                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                        <span id="currentProduction"></span>
+                                                        <a class="btn btn-primary btn-sm btn-circle" data-target="#editProduction" role="button" data-toggle="modal">
+                                                            <i class="fas fa-ellipsis-v"></i>
+                                                        </a>
+                                                    </div>
                                                 </div>
                                                 <div class="col-auto">
                                                     <i class="fas fa-industry fa-2x text-gray-300"></i>
@@ -254,7 +258,6 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
                         </div>
 
@@ -335,6 +338,40 @@
                     </button>
                     <input class="btn btn-success btn-user btn-block" style="width: fit-content;" type="submit"
                            value="Validate" onclick="$('#productionChartform').submit();">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Production Modal-->
+    <div class="modal fade" id="editProduction" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Change your production</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="productionForm" class="user" name="productionChartform" method="post">
+                        <div class="form-group row">
+                            <label for="production" class="col-sm-4 col-form-label"><i
+                                    class="fas fa-circle text-danger"></i> Market (%)</label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="production" step="0.5" min="0"
+                                       max="700">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button id="closeProductionChartform" class="btn btn-secondary" type="button" data-dismiss="modal">
+                        Cancel
+                    </button>
+                    <input class="btn btn-success btn-user btn-block" style="width: fit-content;" type="submit"
+                           value="Validate" onclick="$('#productionForm').submit();">
                 </div>
             </div>
         </div>
@@ -483,7 +520,31 @@
                     }
                 });
             });
+
+            $('#productionForm').submit(function () {
+                
+            });
         });
+//TODO send request
+        /*function updateProduction(){
+            var production = parseFloat(($('#production').val() == "" ? 0 : $('#production').val()));
+
+            var data = {
+                newProduction: production,
+                token: window.localStorage.getItem('token')
+            };
+            // call API
+            $.ajax({
+                method: 'POST',
+                url: `http://${getDomain()}:8080/computePowerPlantElectricityProduction`,
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (response) {console.log(data);
+
+                }
+            });
+        }*/
 
         function sendRequests() {
             $.when(
@@ -508,6 +569,7 @@
 
                 $('#productionRatioBuffer').val(productionRatioBuffer * 100);
                 $('#productionRatioMarket').val(productionRatioMarket * 100);
+                $('#production').val(manager[0].powerPlantProduction);
 
                 var addToBuffer = drawProductionPieChart(productionRatioBuffer, productionRatioMarket, electricityProduction, electricityProduction);
 
@@ -550,7 +612,7 @@
                         window.location = "index.html";
                     } else {
                         $('#accountTitle').html("Dashboard - " + manager.email);
-                        $('#currentProduction').html(manager.powerPlantProduction);
+                        $('#currentProduction').html(round(manager.powerPlantProduction));
                         if(manager.powerPlantStatus == 0){
                             var status = "Stopped";
                             $('#stopPowerPlant').attr("disabled",true);
