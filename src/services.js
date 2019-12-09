@@ -227,18 +227,29 @@ exports.getCurrentMarketDemand = function (token) {
             const data = {"registrationToken": {"$exists": false}};
             return database
                 .find(databaseName, collectionName, data)
-                .then(prosumers => prosumers.map(prosumer => {
-                    return {
-                        prosumer,
-                        consumption: getElectricityConsumption(prosumer.email),
-                        production: getElectricityProduction(prosumer.email)
-                    };
-                }))
-                .all(values => {
-                    let currentMarkerDemand = values.map(value => (value.consumption - value.production) * prosumer.consumptionRatioMarket)
-                        .reduce((a,b) => a+b, 0);
-                    console.log(currentMarkerDemand);
-                    return currentMarkerDemand;
+                .then(prosumers => {
+                    console.log(prosumers.map(
+                        prosumer => [
+                            new Promise(resolve => resolve(prosumer)),
+                            getElectricityConsumption(prosumer.email),
+                            getElectricityProduction(prosumer.email)
+                        ]
+                        )
+                    );
+                    return Promise.all(
+                        prosumers.map(
+                            prosumer => Promise.all([
+                                new Promise(resolve => resolve(prosumer)),
+                                getElectricityConsumption(prosumer.email),
+                                getElectricityProduction(prosumer.email)
+                            ])
+                        )
+                    );
+                })
+                .then(values => {
+                    return values
+                        .map(([prosumer, consumption, production]) => (consumption - production) * prosumer.consumptionRatioMarket)
+                        .reduce((a, b) => a + b, 0);
                 });
         });
 };
@@ -259,7 +270,7 @@ function getSimulatorHttpOptions() {
 }
 
 function getElectricityConsumption(prosumerId) {
-    let options = getSimulatorHttpOptions().assign({
+    let options = Object.assign(getSimulatorHttpOptions(), {
         path: '/getElectricityConsumption?' + querystring.stringify({prosumerId}),
         method: 'GET'
     });
@@ -270,7 +281,7 @@ function getElectricityConsumption(prosumerId) {
 }
 
 function getElectricityProduction(prosumerId) {
-    let options = getSimulatorHttpOptions().assign({
+    let options = Object.assign(getSimulatorHttpOptions(), {
         path: '/getElectricityProduction?' + querystring.stringify({prosumerId}),
         method: 'GET'
     });
