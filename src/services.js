@@ -22,7 +22,7 @@ exports.insertManager = function (data) {
     const databaseName = DATABASE_NAME;
     const collectionName = 'managers';
     data.password = hashPassword(data.password);
-console.log(data);
+    console.log(data);
     var registrationToken = generateToken();
     data.registrationToken = registrationToken;
 
@@ -127,7 +127,7 @@ exports.deleteAccount = function (token) {
             console.log(`User deleted.`);
             return true;
         });
-}
+};
 
 exports.getManagerLogged = function (token) {
     const databaseName = DATABASE_NAME;
@@ -163,7 +163,7 @@ exports.updateData = function (data) {
         updateOperation = {
             $set: data
         };
-console.log(updateOperation);
+    console.log(updateOperation);
     return database
         .updateOne(databaseName, collectionName, {token}, updateOperation)
         .then((nModified) => {
@@ -206,67 +206,78 @@ exports.retrieveManagerPicturePath = function (token) {
         .then((results) => {
             return results[0].picture;
         })
-        .catch(() => {return undefined;});
+        .catch(() => {
+            return undefined;
+        });
 };
 
-exports.getCurrentMarketDemand = function(token) {
+exports.getCurrentMarketDemand = function (token) {
     const databaseName = DATABASE_NAME;
     const collectionName = 'managers';
 
     return database.find(databaseName, collectionName, {token})
-        .then((results) => {
+        .then(results => {
             if (results.length === 1) {
                 return results[0];
             }
-            return {};
-        }).then((results) => {
+            throw `No known manager with this token: ${token}`;
+        }).then(() => {
             const collectionName = 'prosumers';
 
-            const data = { "registrationToken" : { "$exists" : false } }
+            const data = {"registrationToken": {"$exists": false}};
             return database
                 .find(databaseName, collectionName, data)
-                .then((results) => {
-                    console.log(results);
-                    var currentMarketDemand = 0;
-                    results.forEach(function(prosumer){
-                        var prosumerId = prosumer["email"];
-
-                        const simulatorServer = require('../../utils/src/configuration')
-                            .serversConfiguration
-                            .simulator;
-
-                        var options = {
-                            hostname: simulatorServer.hostname,
-                            port: simulatorServer.port,
-                            path: '/getElectricityConsumption?' + querystring.stringify({prosumerId}),
-                            method: 'GET'
-                        };
-
-                        httpRequest(options).then((result) => {
-                            return result.electricityConsumption;
-                        }).then((consumption) => {
-
-                            options = {
-                                hostname: simulatorServer.hostname,
-                                port: simulatorServer.port,
-                                path: '/getElectricityProduction',
-                                method: 'GET'
-                            };
-                            return httpRequest(options).then((result) => {
-                                console.log(prosumer);
-                                console.log("production " + result);
-                                console.log("consumption " + consumption);
-
-                                currentMarketDemand += (consumption - result) * prosumer.consumptionRatioMarket; //TODO pas sure que la variable soit vraiment modifiée
-                                console.log("demand 1 " + currentMarketDemand);
-                                return currentMarketDemand;
-                            });
-                        });
-                    });
-console.log("demand totale " + currentMarketDemand);
-                    return currentMarketDemand;
+                .then(prosumers => prosumers.map(prosumer => {
+                    return {
+                        prosumer,
+                        consumption: getElectricityConsumption(prosumer.email),
+                        production: getElectricityProduction(prosumer.email)
+                    };
+                }))
+                .all(values => {
+                    let currentMarkerDemand = values.map(value => (value.consumption - value.production) * prosumer.consumptionRatioMarket)
+                        .reduce((a,b) => a+b, 0);
+                    console.log(currentMarkerDemand);
+                    return currentMarkerDemand;
                 });
         });
+};
+
+/**
+ * Create an option object representing the simulator server path.
+ * @returns {{hostname: (string), port: string}}
+ */
+function getSimulatorHttpOptions() {
+    const simulatorServer = require('../../utils/src/configuration')
+        .serversConfiguration
+        .simulator;
+
+    return {
+        hostname: simulatorServer.hostname,
+        port: simulatorServer.port
+    };
+}
+
+function getElectricityConsumption(prosumerId) {
+    let options = getSimulatorHttpOptions().assign({
+        path: '/getElectricityConsumption?' + querystring.stringify({prosumerId}),
+        method: 'GET'
+    });
+
+    return httpRequest(options).then(result => {
+        return result.electricityConsumption;
+    });
+}
+
+function getElectricityProduction(prosumerId) {
+    let options = getSimulatorHttpOptions().assign({
+        path: '/getElectricityProduction?' + querystring.stringify({prosumerId}),
+        method: 'GET'
+    });
+
+    return httpRequest(options).then(production => {
+        return production;
+    });
 }
 
 function generateToken() {
