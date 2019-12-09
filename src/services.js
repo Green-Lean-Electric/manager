@@ -209,7 +209,97 @@ exports.retrieveManagerPicturePath = function (token) {
         .catch(() => {return undefined;});
 };
 
+exports.getCurrentMarketDemand = function(token) {
+    const databaseName = DATABASE_NAME;
+    const collectionName = 'managers';
+
+    return database.find(databaseName, collectionName, {token})
+        .then((results) => {
+            if (results.length === 1) {
+                return results[0];
+            }
+            return {};
+        }).then((results) => {
+            const collectionName = 'prosumers';
+
+            const data = { "registrationToken" : { "$exists" : false } }
+            return database
+                .find(databaseName, collectionName, data)
+                .then((results) => {
+                    console.log(results);
+                    var currentMarketDemand = 0;
+                    results.forEach(function(prosumer){
+                        var prosumerId = prosumer["email"];
+
+                        const simulatorServer = require('../../utils/src/configuration')
+                            .serversConfiguration
+                            .simulator;
+
+                        var options = {
+                            hostname: simulatorServer.hostname,
+                            port: simulatorServer.port,
+                            path: '/getElectricityConsumption?' + querystring.stringify({prosumerId}),
+                            method: 'GET'
+                        };
+
+                        httpRequest(options).then((result) => {
+                            return result.electricityConsumption;
+                        }).then((consumption) => {
+
+                            options = {
+                                hostname: simulatorServer.hostname,
+                                port: simulatorServer.port,
+                                path: '/getElectricityProduction',
+                                method: 'GET'
+                            };
+                            return httpRequest(options).then((result) => {
+                                console.log(prosumer);
+                                console.log("production " + result);
+                                console.log("consumption " + consumption);
+
+                                currentMarketDemand += (consumption - result) * prosumer.consumptionRatioMarket; //TODO pas sure que la variable soit vraiment modifiée
+                                console.log("demand 1 " + currentMarketDemand);
+                                return currentMarketDemand;
+                            });
+                        });
+                    });
+console.log("demand totale " + currentMarketDemand);
+                    return currentMarketDemand;
+                });
+        });
+}
+
 function generateToken() {
     const crypto = require("crypto");
     return crypto.randomBytes(16).toString("hex");
+}
+
+// TODO Centraliser dans utils
+function httpRequest(options, postData) {
+    return new Promise(function (resolve, reject) {
+        const request = http.request(options, function (reply) {
+            if (reply.statusCode < 200 || reply.statusCode >= 300) {
+                return reject(new Error('status=' + reply.statusCode));
+            }
+            let body = [];
+            reply.on('data', function (chunk) {
+                body.push(chunk);
+            });
+            reply.on('end', function () {
+                try {
+                    body = JSON.parse(Buffer.concat(body).toString());
+                } catch (error) {
+                    reject(error);
+                }
+                resolve(body);
+            });
+        });
+        request.on('error', function (error) {
+            reject(error);
+        });
+        if (postData) {
+            request.write(postData);
+        }
+        request.end();
+    });
 }
