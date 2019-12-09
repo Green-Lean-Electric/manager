@@ -214,7 +214,7 @@ exports.retrieveManagerPicturePath = function (token) {
 exports.getCurrentMarketDemand = function (token) {
     const databaseName = DATABASE_NAME;
     const collectionName = 'managers';
-
+console.log(token);
     return database.find(databaseName, collectionName, {token})
         .then(results => {
             if (results.length === 1) {

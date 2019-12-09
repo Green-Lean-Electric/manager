@@ -422,23 +422,23 @@
         function sendRequests() {
             $.when(
                 getManagerLogged(),
-                //getProsumerElectricityConsumption(),
+                getCurrentMarketDemand()
                 //getWindSpeed(),
                 //getCurrentElectricityPrice(),
                 //getElectricityProduction()
-            ).done(function (manager){//, electricityConsumption, windSpeed, electricityPrice, electricityProduction) {
-                console.log(manager);
+            ).done(function (manager, marketDemand){//, windSpeed, electricityPrice, electricityProduction) {
+                console.log(manager[0]);
                 var electricityProduction = 15; //TODO Remove
 
-                var currentBufferFilling = round(('bufferFilling' in manager ? manager.bufferFilling : 0));
+                var currentBufferFilling = round(('bufferFilling' in manager[0] ? manager[0].bufferFilling : 0));
                 $('#bufferFilling').html(currentBufferFilling);
                 $("#bufferFillingBar").width(currentBufferFilling + "%");
 
                /* var netProduction = electricityProduction[0] - electricityConsumption[0].electricityConsumption;
                 $('#netProduction').html(round(netProduction) + " kwh");*/
 
-                var productionRatioBuffer = manager.productionRatioBuffer;
-                var productionRatioMarket = manager.productionRatioMarket;
+                var productionRatioBuffer = manager[0].productionRatioBuffer;
+                var productionRatioMarket = manager[0].productionRatioMarket;
 
                 $('#productionRatioBuffer').val(productionRatioBuffer * 100);
                 $('#productionRatioMarket').val(productionRatioMarket * 100);
@@ -489,20 +489,20 @@
             });
         }
 
-        /*function getProsumerElectricityConsumption() {
+        function getCurrentMarketDemand() {
             return $.ajax({
                 method: 'GET',
-                url: '/getProsumerElectricityConsumption?token=' + window.localStorage.getItem('token'),
+                url: '/getCurrentMarketDemand?token=' + window.localStorage.getItem('token'),
                 dataType: 'json',
                 success: function (response) {
-                    if (!$.isEmptyObject(response)) {
-                        $('#currentConsumption').html(round(response.electricityConsumption) + " kwh");
+                    if (response) {
+                        $('#currentMarketDemand').html(round(response) + " kwh");
                     }
                 }
             });
         }
 
-        function getWindSpeed() {
+        /*function getWindSpeed() {
             return $.ajax({
                 method: 'GET',
                 url: `http://${getDomain()}:8080/getWindSpeed`,
