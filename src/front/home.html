@@ -168,18 +168,15 @@
                                         <div class="card-body">
                                             <div class="row no-gutters align-items-center">
                                                 <div class="col mr-2">
-                                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                        Net Production
+                                                    <div id="powerPlantStatus" class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                        Status
                                                     </div>
                                                     <div class="row no-gutters align-items-center">
-                                                        <div class="col-auto">
-                                                            <div id="netProduction"
-                                                                 class="h5 mb-0 mr-3 font-weight-bold text-gray-800"></div>
+                                                        <div class="h5 font-weight-bold text-gray-800" style="display: contents;">
+                                                            <button id="startPowerPlant" class="btn btn-success col" type="button" data-dismiss="modal">Start</button>
+                                                            <button id="stopPowerPlant" class="btn btn-danger col" type="button" data-dismiss="modal">Stop</button>   
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="col-auto">
-                                                    <i class="fas fa-bolt fa-2x text-gray-300"></i>
                                                 </div>
                                             </div>
                                         </div>
@@ -417,6 +414,75 @@
                 }
                 return false;
             });
+
+            $('#startPowerPlant').on('click', function(){
+                var data = {
+                    powerPlantStatus: 1,
+                    token: window.localStorage.getItem('token')
+                };
+
+                $.ajax({
+                    method: 'POST',
+                    url: '/updateData', //TODO Regrouper en 1 fonction
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function (response) {
+                        if (JSON.parse(response)) {
+                            sendRequests();
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                });
+
+                setTimeout(function () {alert("ok");
+                    var data = {
+                        powerPlantStatus: 2,
+                        token: window.localStorage.getItem('token')
+                    };
+
+                    $.ajax({
+                        method: 'POST',
+                        url: '/updateData', //TODO Regrouper en 1 fonction
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        data: JSON.stringify(data),
+                        success: function (response) {
+                            if (JSON.parse(response)) {
+                                sendRequests();
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        }
+                    });
+                }, 30000);
+            });
+
+            $('#stopPowerPlant').on('click', function(){
+                var data = {
+                    powerPlantStatus: 0,
+                    token: window.localStorage.getItem('token')
+                };
+
+                $.ajax({
+                    method: 'POST',
+                    url: '/updateData',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function (response) {
+                        if (JSON.parse(response)) {
+                            sendRequests();
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                });
+            });
         });
 
         function sendRequests() {
@@ -463,7 +529,7 @@
                     contentType: 'application/json',
                     data: JSON.stringify(data),
                     success: function (response) {
-                        if (JSON.parse(response)) {
+                        if (response) {
                             return true;
                         } else {
                             return false;
@@ -484,6 +550,21 @@
                         window.location = "index.html";
                     } else {
                         $('#accountTitle').html("Dashboard - " + manager.email);
+                        if(manager.powerPlantStatus == 0){
+                            var status = "Stopped";
+                            $('#stopPowerPlant').attr("disabled",true);
+                            $('#startPowerPlant').attr("disabled",false);
+                        } else if (manager.powerPlantStatus == 1){
+                            var status = "Starting";
+                            $('#startPowerPlant').attr("disabled",true);
+                            $('#stopPowerPlant').attr("disabled",false);
+                        } else {
+                            var status = "Running";
+                            $('#startPowerPlant').attr("disabled",true);
+                            $('#stopPowerPlant').attr("disabled",false);
+                        }
+                        
+                        $('#powerPlantStatus').html("Status - " + status);
                     }
                 }
             });
