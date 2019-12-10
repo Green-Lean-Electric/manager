@@ -237,10 +237,8 @@
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
 
-                                <!-- Current Electricity Price -->
                                 <div class="col-xl-6 col-md-6 mb-4" style="height: fit-content;">
                                     <div class="card border-left-danger shadow h-100 py-2">
                                         <div class="card-body">
@@ -251,6 +249,29 @@
                                                     </div>
                                                     <div id="currentMarketDemand"
                                                          class="h5 mb-0 font-weight-bold text-gray-800"></div>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <i class="fas fa-bolt fa-2x text-gray-300"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-6 col-md-6 mb-4" style="height: fit-content;">
+                                    <div class="card border-left-danger shadow h-100 py-2">
+                                        <div class="card-body">
+                                            <div class="row no-gutters align-items-center">
+                                                <div class="col mr-2">
+                                                    <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                                        Current Market Price
+                                                    </div>
+                                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                        <div class="col-sm-5" style="display: inline-block;padding: 0 0.5rem;">
+                                                            <input onchange="updatePrice();" id="currentMarketPrice" type="number" class="form-control" min="0" data-toggle="tooltip" data-placement="top" title="">
+                                                        </div>
+                                                        <label> SEK/kwh</label>
+                                                    </div>
                                                 </div>
                                                 <div class="col-auto">
                                                     <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
@@ -495,7 +516,33 @@
                 });
             });
 
+            $(function () {
+                $('[data-toggle="tooltip"]').tooltip()
+            });
+
         });
+
+        function updatePrice(){
+            var data = {
+                marketPrice:  parseFloat($('#currentMarketPrice').val()),
+                token: window.localStorage.getItem('token')
+            };
+
+            $.ajax({
+                method: 'POST',
+                url: '/updateData',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (response) {
+                    if (response) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            });
+        }
 
         function updateProduction(){
             if($('#changeProduction').val() > 22)
@@ -526,17 +573,16 @@
         function sendRequests(isFirstCall) {
             $.when(
                 getManagerLogged(),
-                getCurrentMarketDemand()
-                //getWindSpeed(),
-                //getCurrentElectricityPrice(),
-                //getElectricityProduction()
-            ).done(function (manager, marketDemand){//, windSpeed, electricityPrice, electricityProduction) {
+                getCurrentMarketDemand(),
+                getCurrentElectricityPrice()
+            ).done(function (manager, marketDemand, electricityPrice) {
                 console.log(manager[0]);
                 var electricityProduction = manager[0].powerPlantProduction;
 
                 if(isFirstCall)
                     $('#changeProduction').val(round(electricityProduction));
 
+                $('#currentMarketPrice').val(manager[0].marketPrice);
 
                 var currentBufferFilling = round(('bufferFilling' in manager[0] ? manager[0].bufferFilling : 0));
                 $('#bufferFilling').html(currentBufferFilling);
@@ -550,7 +596,8 @@
                 
                 var newBufferFilling = currentBufferFilling;
                 if(manager[0].powerPlantStatus == 0){
-                    newBufferFilling = parseInt(currentBufferFilling) - parseInt(marketDemand[0]);
+                    var removeToBuffer = (parseInt(marketDemand[0]) * 100 )/ manager[0].bufferSize;
+                    newBufferFilling = parseInt(currentBufferFilling) - removeToBuffer;
                     if (newBufferFilling < 0) {
                         newBufferFilling = 0;
                     }
@@ -561,8 +608,6 @@
                         newBufferFilling = 100;
                     }
                 }
-                console.log(currentBufferFilling);
-                console.log(newBufferFilling);
 
                 var data = {
                     bufferFilling: newBufferFilling,
@@ -634,19 +679,6 @@
             });
         }
 
-        /*function getWindSpeed() {
-            return $.ajax({
-                method: 'GET',
-                url: `http://${getDomain()}:8080/getWindSpeed`,
-                dataType: 'json',
-                success: function (response) {
-                    if (response) {
-                        //$('#currentWind').html(response.windSpeed + " km/h");
-                    }
-                }
-            });
-        }
-
         function getCurrentElectricityPrice() {
             return $.ajax({
                 method: 'GET',
@@ -654,24 +686,11 @@
                 dataType: 'json',
                 success: function (response) {
                     if (response) {
-                        $('#currentPrice').html(response.currentElectricityPrice + " SEK/kwh");
+                        $('#currentMarketPrice').attr("title","Advice : " + response.currentElectricityPrice + " SEK/kwh");
                     }
                 }
             });
         }
-
-        function getElectricityProduction() {
-            return $.ajax({
-                method: 'GET',
-                url: `http://${getDomain()}:8080/getElectricityProduction`,
-                dataType: 'json',
-                success: function (response) {
-                    if (response !== false) {
-                        $('#currrentProduction').html(response + " kw");
-                    }
-                }
-            });
-        }*/
 
         function round(number) {
             return (Math.round(number * 100) / 100);
