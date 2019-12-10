@@ -532,10 +532,11 @@
                 //getElectricityProduction()
             ).done(function (manager, marketDemand){//, windSpeed, electricityPrice, electricityProduction) {
                 console.log(manager[0]);
-                if(isFirstCall)
-                    $('#changeProduction').val(round(manager[0].powerPlantProduction));
+                var electricityProduction = manager[0].powerPlantProduction;
 
-                var electricityProduction = 15; //TODO Remove
+                if(isFirstCall)
+                    $('#changeProduction').val(round(electricityProduction));
+
 
                 var currentBufferFilling = round(('bufferFilling' in manager[0] ? manager[0].bufferFilling : 0));
                 $('#bufferFilling').html(currentBufferFilling);
@@ -546,14 +547,22 @@
 
                 $('#productionRatioBuffer').val(productionRatioBuffer * 100);
                 $('#productionRatioMarket').val(productionRatioMarket * 100);
-
-                var addToBuffer = drawProductionPieChart(productionRatioBuffer, productionRatioMarket, electricityProduction, electricityProduction);
-
-                console.log(addToBuffer); //TODO when buffer will decrease ?
-                var newBufferFilling = currentBufferFilling + addToBuffer;
-                if (newBufferFilling >= 100) {
-                    newBufferFilling = 100;
+                
+                var newBufferFilling = currentBufferFilling;
+                if(manager[0].powerPlantStatus == 0){
+                    newBufferFilling = parseInt(currentBufferFilling) - parseInt(marketDemand[0]);
+                    if (newBufferFilling < 0) {
+                        newBufferFilling = 0;
+                    }
+                } else {
+                    var addToBuffer = drawProductionPieChart(productionRatioBuffer, productionRatioMarket, electricityProduction, electricityProduction);
+                    newBufferFilling = currentBufferFilling + addToBuffer;
+                    if (newBufferFilling >= 100) {
+                        newBufferFilling = 100;
+                    }
                 }
+                console.log(currentBufferFilling);
+                console.log(newBufferFilling);
 
                 var data = {
                     bufferFilling: newBufferFilling,
