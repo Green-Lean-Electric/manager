@@ -221,13 +221,14 @@
                                             <div class="row no-gutters align-items-center">
                                                 <div class="col mr-2">
                                                     <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                        Current Production
+                                                        Current Production <i class="fas fa-long-arrow-alt-right"></i> Desired
                                                     </div>
                                                     <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                        <span id="currentProduction"></span>
-                                                        <a class="btn btn-primary btn-sm btn-circle" data-target="#editProduction" role="button" data-toggle="modal">
-                                                            <i class="fas fa-ellipsis-v"></i>
-                                                        </a>
+                                                        <label id="currentProduction"></label>
+                                                        <i class="fas fa-long-arrow-alt-right"></i>
+                                                        <div class="col-sm-5" style="display: inline-block;padding: 0 0.5rem;">
+                                                            <input onchange="updateProduction();" id="changeProduction" type="number" class="form-control" id="" step="0.5" min="0" max="22">
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-auto">
@@ -474,7 +475,7 @@
                     }
                 });
 
-                setTimeout(function () {alert("ok");
+                setTimeout(function () {
                     var data = {
                         powerPlantStatus: 2,
                         token: window.localStorage.getItem('token')
@@ -521,13 +522,15 @@
                 });
             });
 
-            $('#productionForm').submit(function () {
-                
-            });
         });
-//TODO send request
-        /*function updateProduction(){
-            var production = parseFloat(($('#production').val() == "" ? 0 : $('#production').val()));
+
+        function updateProduction(){
+            if($('#changeProduction').val() > 22)
+                $('#changeProduction').val(22);
+            else if ($('#changeProduction').val() < 0)
+                $('#changeProduction').val(0);
+
+            var production = parseFloat(($('#changeProduction').val() == "" ? 0 : $('#changeProduction').val()));
 
             var data = {
                 newProduction: production,
@@ -540,11 +543,11 @@
                 dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify(data),
-                success: function (response) {console.log(data);
+                success: function (response) {console.log(response);
 
                 }
             });
-        }*/
+        }
 
         function sendRequests() {
             $.when(
@@ -561,9 +564,6 @@
                 $('#bufferFilling').html(currentBufferFilling);
                 $("#bufferFillingBar").width(currentBufferFilling + "%");
 
-               /* var netProduction = electricityProduction[0] - electricityConsumption[0].electricityConsumption;
-                $('#netProduction').html(round(netProduction) + " kwh");*/
-
                 var productionRatioBuffer = manager[0].productionRatioBuffer;
                 var productionRatioMarket = manager[0].productionRatioMarket;
 
@@ -573,7 +573,7 @@
 
                 var addToBuffer = drawProductionPieChart(productionRatioBuffer, productionRatioMarket, electricityProduction, electricityProduction);
 
-                console.log(addToBuffer); //TODO when buffer decrease ?
+                console.log(addToBuffer); //TODO when buffer will decrease ?
                 var newBufferFilling = currentBufferFilling + addToBuffer;
                 if (newBufferFilling >= 100) {
                     newBufferFilling = 100;
@@ -612,7 +612,7 @@
                         window.location = "index.html";
                     } else {
                         $('#accountTitle').html("Dashboard - " + manager.email);
-                        $('#currentProduction').html(round(manager.powerPlantProduction));
+                        $('#currentProduction').html(round(manager.powerPlantProduction) + ' W');
                         if(manager.powerPlantStatus == 0){
                             var status = "Stopped";
                             $('#stopPowerPlant').attr("disabled",true);
@@ -639,7 +639,7 @@
                 url: '/getCurrentMarketDemand?token=' + window.localStorage.getItem('token'),
                 dataType: 'json',
                 success: function (response) {
-                    if (response) {
+                    if (!isNaN(response)) {
                         $('#currentMarketDemand').html(round(response) + " kwh");
                     }
                 }
@@ -653,7 +653,7 @@
                 dataType: 'json',
                 success: function (response) {
                     if (response) {
-                        $('#currentWind').html(response.windSpeed + " km/h");
+                        //$('#currentWind').html(response.windSpeed + " km/h");
                     }
                 }
             });
@@ -686,7 +686,7 @@
         }*/
 
         function round(number) {
-            return (Math.round(number * 1000000) / 1000000);
+            return (Math.round(number * 100) / 100);
         }
 
         function drawProductionPieChart(pchart_buffer_percent, pchart_market_percent, electricityProduction) {
