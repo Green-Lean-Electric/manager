@@ -104,62 +104,37 @@
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
-                    <h1 class="h3 mb-2 text-gray-800">Tables</h1>
-                    <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below. For more information about DataTables, please visit the <a target="_blank" href="https://datatables.net">official DataTables documentation</a>.</p>
-
+                    <h1 class="h3 mb-2 text-gray-800">Prosumers</h1>
+                    
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                          <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+                          <h6 class="m-0 font-weight-bold text-success">DataTables Example</h6>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
-                                            <th>Name</th>
-                                            <th>Position</th>
-                                            <th>Office</th>
-                                            <th>Age</th>
-                                            <th>Start date</th>
-                                            <th>Salary</th>
+                                            <th>Email</th>
+                                            <th>Buffer Filling</th>
+                                            <th>Is Logged</th>
+                                            <th>Production</th>
+                                            <th>Consumption</th>
+                                            <th>Block</th>
                                         </tr>
                                     </thead>
                                     <tfoot>
                                         <tr>
-                                            <th>Name</th>
-                                            <th>Position</th>
-                                            <th>Office</th>
-                                            <th>Age</th>
-                                            <th>Start date</th>
-                                            <th>Salary</th>
+                                            <th>Email</th>
+                                            <th>Buffer Filling</th>
+                                            <th>Is Logged</th>
+                                            <th>Production</th>
+                                            <th>Consumption</th>
+                                            <th>Block</th>
                                         </tr>
                                     </tfoot>
-                                    <tbody>
-                                        <tr>
-                                            <td>Tiger Nixon</td>
-                                            <td>System Architect</td>
-                                            <td>Edinburgh</td>
-                                            <td>61</td>
-                                            <td>2011/04/25</td>
-                                            <td>$320,800</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Tiger Nixon</td>
-                                            <td>System Architect</td>
-                                            <td>Edinburgh</td>
-                                            <td>61</td>
-                                            <td>2011/04/25</td>
-                                            <td>$320,800</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Tiger Nixon</td>
-                                            <td>System Architect</td>
-                                            <td>Edinburgh</td>
-                                            <td>61</td>
-                                            <td>2011/04/25</td>
-                                            <td>$320,800</td>
-                                        </tr>
+                                    <tbody id="table_body">
                                     </tbody>
                                 </table>
                             </div>
@@ -198,6 +173,44 @@
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                     <a class="btn btn-success" id="logout" data-dismiss="modal" style="color: #fff;cursor:pointer;">Logout</a>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Block Prosumer Modal-->
+    <div class="modal fade" id="blockProsumerModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Block prosumer</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="user" method="post">
+                    <div class="form-group row">
+                        <div class="col-sm-12">
+                            <input type="email" class="form-control" id="prosumerToBlock" disabled>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-8">
+                            <input type="number" class="form-control" id="blockedTime" step="0.5" min="10"
+                                   max="100">
+                        </div>
+                        <label for="blockedTime" class="col-sm-4 col-form-label"> Seconds</label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="closeConsumptionChartform" class="btn btn-secondary" type="button" data-dismiss="modal">
+                    Cancel
+                </button>
+                <input class="btn btn-primary btn-user btn-block" style="width: fit-content;" type="submit"
+                       value="Validate" onclick="blockProsumer();">
+            </div>
             </div>
         </div>
     </div>
@@ -245,11 +258,8 @@
         function sendRequests() {
             $.when(
                 getManagerLogged(),
-                //getProsumerElectricityConsumption(),
-                //getWindSpeed(),
-                //getCurrentElectricityPrice(),
-                //getElectricityProduction()
-            ).done(function (manager){//, electricityConsumption, windSpeed, electricityPrice, electricityProduction) {
+                getProsumers(),
+            ).done(function (manager, prosumers){
                 console.log(manager);
 
                 /*var currentBufferFilling = round(('bufferFilling' in prosumer[0] ? prosumer[0].bufferFilling : 0));
@@ -317,6 +327,70 @@
                     }
                 }
             });
+        }
+
+        function getProsumers() {
+            $('#table_body').empty();
+            return $.ajax({
+                method: 'GET',
+                url: '/getProsumers?token=' + window.localStorage.getItem('token'),
+                dataType: 'json',
+                success: function (prosumers) {
+                    if (!$.isEmptyObject(prosumers)) {
+                        console.log(prosumers);
+                        prosumers.forEach(function(item){console.log(item);
+                            var htmlProsumer = $( "<tr>"
+                                + "<td>" + item.email + "</td>"
+                                + "<td>" + item.bufferFilling + "</td>"
+                                + "<td>"
+                                    + "<i class=\"fas fa-circle " + (item.token == null ? "text-danger" : "text-success") +"\"></i>"
+                                +"</td>"
+                                + "<td>" + round(item.production) + "</td>"
+                                + "<td>" + round(item.consumption) + "</td>"
+                                + "<td>" 
+                                    + "<a href=\"#\" class=\"btn btn-danger btn-circle btn-sm \" data-target=\"#blockProsumerModal\" role=\"button\" data-toggle=\"modal\" aria-haspopup=\"true\" aria-expanded=\"false\" onclick=\"$('#prosumerToBlock').val('" + item.email + "')\">"
+                                        + "<i class=\"fas fa-ban\"></i>"
+                                    + "</a>"
+                                + "</td>"
+                                + "</tr>" );
+                            $('#table_body').append(htmlProsumer);
+                        });
+                        
+                    }
+                }
+            });
+        }
+
+        function blockProsumer(){
+            var prosumerID = $('#prosumerToBlock').val();
+            var time = parseFloat(($('#blockedTime').val() == "" ? 0 : $('#blockedTime').val()));
+            if(time < 10)
+                time = 10;
+            else if(time > 100)
+                time = 100;
+            var data = {
+                    prosumerID: prosumerID,
+                    blockedTime: time,
+                    token: window.localStorage.getItem('token')
+                };
+
+            return $.ajax({
+                    method: 'POST',
+                    url: '/blockProsumer',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function (response) {console.log(response);
+                        if (JSON.parse(response)) {
+                            Templates.Modals.displayModal(createMessageModal("Messsage","Prosumer Blocked", "prosumerBlocked"));
+                            sendRequests();
+                            $('#blockProsumerModal .close').click();
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                });
         }
 
         function round(number) {

@@ -254,6 +254,82 @@ console.log(token);
         });
 };
 
+exports.getProsumers = function (token) {
+    const databaseName = DATABASE_NAME;
+    var collectionName = 'managers';
+    const manager = {
+        token
+    };
+
+    return database
+        .find(databaseName, collectionName, manager)
+        .then((results) => {
+            if (results.length > 0) {
+                collectionName = 'prosumers';
+                return database
+                    .find(databaseName, collectionName, {})
+                    .then((prosumers) => {
+                        return Promise.all(
+                            prosumers.map(
+                                prosumer => Promise.all([
+                                    new Promise(resolve => resolve(prosumer)),
+                                    getElectricityConsumption(prosumer.email),
+                                    getElectricityProduction(prosumer.email)
+                                ])
+                            )
+                        );
+                    }).then((values) => {console.log(values);
+                        return values
+                            .map(([prosumer, consumption, production]) => {
+                                prosumer.consumption = consumption;
+                                prosumer.production = production;
+                                return prosumer;
+                            });
+                    });
+            }
+            return {};
+
+        });
+};
+
+exports.blockProsumer = function(data){
+    const databaseName = DATABASE_NAME;
+    var collectionName = 'managers';
+
+    const manager = {
+        token: data.token
+    };
+
+    return database
+        .find(databaseName, collectionName, manager)
+        .then((results) => {
+            if (results.length > 0) {
+                collectionName = 'prosumers';
+                return database
+                    .find(databaseName, collectionName, {email: data.prosumerID})
+                    .then((prosumer) => {console.log(prosumer[0].email);
+                        var updateOperation = {
+                                $set: {
+                                    initBlockedTime : Date.now(),
+                                    blockedTime : data.blockedTime
+                                }
+                            };
+                        return database
+                            .updateOne(databaseName, collectionName, {email: prosumer[0].email}, updateOperation)
+                            .then((nModified) => {
+                                if (nModified !== 0) {
+                                    return true;
+                                } else {
+                                    console.log(`User not found or data already with the same values`);
+                                    return {};
+                                }
+                            });
+
+                    });
+            }
+        });
+}
+
 /**
  * Create an option object representing the simulator server path.
  * @returns {{hostname: (string), port: string}}
