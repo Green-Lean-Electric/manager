@@ -22,6 +22,7 @@ const routes = {
         '/getCurrentMarketDemand': (request, parameters) => service.getCurrentMarketDemand(parameters.token),
         '/getProsumers':(request, parameters) => service.getProsumers(parameters.token),
         '/blockProsumer': (request, parameters) => service.blockProsumer(parameters),
+        '/setPowerPlantElectricityProduction': (request, parameters) => service.setPowerPlantElectricityProduction(parameters.token, parameters.newProduction)
     }
 ;
 

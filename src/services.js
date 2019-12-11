@@ -214,7 +214,7 @@ exports.retrieveManagerPicturePath = function (token) {
 exports.getCurrentMarketDemand = function (token) {
     const databaseName = DATABASE_NAME;
     const collectionName = 'managers';
-console.log(token);
+    console.log(token);
     return database.find(databaseName, collectionName, {token})
         .then(results => {
             if (results.length === 1) {
@@ -228,14 +228,6 @@ console.log(token);
             return database
                 .find(databaseName, collectionName, data)
                 .then(prosumers => {
-                    console.log(prosumers.map(
-                        prosumer => [
-                            new Promise(resolve => resolve(prosumer)),
-                            getElectricityConsumption(prosumer.email),
-                            getElectricityProduction(prosumer.email)
-                        ]
-                        )
-                    );
                     return Promise.all(
                         prosumers.map(
                             prosumer => Promise.all([
@@ -246,9 +238,10 @@ console.log(token);
                         )
                     );
                 })
-                .then(values => {console.log(values);
+                .then(values => {
+                    console.log(values);
                     return values
-                        .map(([prosumer, consumption, production]) => Math.max(0,(consumption - production) * prosumer.consumptionRatioMarket))
+                        .map(([prosumer, consumption, production]) => Math.max(0, (consumption - production) * prosumer.consumptionRatioMarket))
                         .reduce((a, b) => a + b, 0);
                 });
         });
@@ -329,6 +322,32 @@ exports.blockProsumer = function(data){
             }
         });
 }
+
+exports.setPowerPlantElectricityProduction = function (token, newProduction) {
+    const databaseName = DATABASE_NAME;
+    const collectionName = 'managers';
+    return database
+        .find(databaseName, collectionName, {token})
+        .then(managers => managers[0])
+        .then(manager => database.updateOne(databaseName, collectionName, manager, {
+            $set:
+                {
+                    productionModificationTime: Date.now(),
+                    newProduction,
+                    powerPlantProduction: server.computeLinearFunction(
+                        manager.powerPlantProduction || 0,
+                        manager.newProduction || 0,
+                        30,
+                        (Date.now() - manager.productionModificationTime) / 1000
+                    )
+                }
+        }))
+        .then(count => {return {count}})
+        .catch(e => {
+            console.error(e);
+            return undefined;
+        });
+};
 
 /**
  * Create an option object representing the simulator server path.

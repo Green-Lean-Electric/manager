@@ -25,261 +25,274 @@
 
 <body id="page-top">
 
-    <!-- Page Wrapper -->
-    <div id="wrapper" style="height: 100%;min-height: 100vh;">
+<!-- Page Wrapper -->
+<div id="wrapper" style="height: 100%;min-height: 100vh;">
 
-        <!-- Sidebar -->
-        <ul class="navbar-nav bg-gradient-success sidebar sidebar-dark accordion" id="accordionSidebar">
+    <!-- Sidebar -->
+    <ul class="navbar-nav bg-gradient-success sidebar sidebar-dark accordion" id="accordionSidebar">
 
-          <!-- Sidebar - Brand -->
-          <a class="sidebar-brand d-flex align-items-center justify-content-center" href="home.html">
+        <!-- Sidebar - Brand -->
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="home.html">
             <div class="sidebar-brand-icon rotate-n-15">
                 <i class="fas fa-bolt"></i>
             </div>
             <div class="sidebar-brand-text mx-3">Manager Account</div>
-          </a>
+        </a>
 
-          <!-- Divider -->
-          <hr class="sidebar-divider my-0">
+        <!-- Divider -->
+        <hr class="sidebar-divider my-0">
 
-          <!-- Nav Item - Dashboard -->
-          <li class="nav-item active">
+        <!-- Nav Item - Dashboard -->
+        <li class="nav-item active">
             <a class="nav-link" href="home.html">
-              <i class="fas fa-fw fa-tachometer-alt"></i>
-              <span>Dashboard</span></a>
-          </li>
+                <i class="fas fa-fw fa-tachometer-alt"></i>
+                <span>Dashboard</span></a>
+        </li>
 
-          <li class="nav-item active">
+        <li class="nav-item active">
             <a class="nav-link" href="account.html">
-              <i class="fas fa-fw fa-user-circle"></i>
-              <span>Your account</span></a>
-          </li>
+                <i class="fas fa-fw fa-user-circle"></i>
+                <span>Your account</span></a>
+        </li>
 
-          <li class="nav-item active">
+        <li class="nav-item active">
             <a class="nav-link" href="prosumers.html">
-              <i class="fas fa-fw fa-users"></i>
-              <span>Prosumers</span></a>
-          </li>
+                <i class="fas fa-fw fa-users"></i>
+                <span>Prosumers</span></a>
+        </li>
 
-          <!-- Divider -->
-          <hr class="sidebar-divider d-none d-md-block">
+        <!-- Divider -->
+        <hr class="sidebar-divider d-none d-md-block">
 
-          <!-- Sidebar Toggler (Sidebar) -->
-          <div class="text-center d-none d-md-inline">
+        <!-- Sidebar Toggler (Sidebar) -->
+        <div class="text-center d-none d-md-inline">
             <button class="rounded-circle border-0" id="sidebarToggle"></button>
-          </div>
+        </div>
 
-        </ul>
-        <!-- End of Sidebar -->
+    </ul>
+    <!-- End of Sidebar -->
 
-        <!-- Content Wrapper -->
-        <div id="content-wrapper" class="d-flex flex-column">
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
 
-            <!-- Main Content -->
-            <div id="content">
+        <!-- Main Content -->
+        <div id="content">
 
-                <!-- Topbar -->
-                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-                    
-                    <!-- Topbar Navbar -->
-                    <ul class="navbar-nav ml-auto">
+            <!-- Topbar -->
+            <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
-                        <div class="topbar-divider d-none d-sm-block"></div>
+                <!-- Topbar Navbar -->
+                <ul class="navbar-nav ml-auto">
 
-                        <!-- Nav Item - User Information -->
-                        <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="#" data-target="#logoutModal" role="button"
-                               data-toggle="modal" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                Logout
-                            </a>
-                        </li>
+                    <div class="topbar-divider d-none d-sm-block"></div>
 
-                    </ul>
+                    <!-- Nav Item - User Information -->
+                    <li class="nav-item dropdown no-arrow">
+                        <a class="nav-link dropdown-toggle" href="#" data-target="#logoutModal" role="button"
+                           data-toggle="modal" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                            Logout
+                        </a>
+                    </li>
 
-                </nav>
-                <!-- End of Topbar -->
+                </ul>
 
-                <!-- Begin Page Content -->
-                <div class="container-fluid">
+            </nav>
+            <!-- End of Topbar -->
 
-                    <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 id="accountTitle" class="h3 mb-0 text-gray-800">Dashboard</h1>
-                    </div>
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
 
-                    <!-- Content Row -->
-                    <div class="row">
+                <!-- Page Heading -->
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 id="accountTitle" class="h3 mb-0 text-gray-800">Dashboard</h1>
+                </div>
 
-                        <!-- Current Production -->
-                        <div class="col-xl-6 col-md-6 mb-4">
-                            <div class="card border-left-info  shadow">
-                                <!-- Card Header - Dropdown -->
-                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-info">Production Ratio</h6>
-                                    <div class="dropdown no-arrow">
-                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                                             aria-labelledby="dropdownMenuLink">
-                                            <div class="dropdown-header">Ratio :</div>
-                                            <a class="dropdown-item" href="#" data-target="#editProductionRatio"
-                                               role="button" data-toggle="modal">Edit</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Card Body -->
-                                <div class="card-body">
-                                    <div class="chart-pie pt-4 pb-2">
-                                        <div class="chartjs-size-monitor">
-                                            <div class="chartjs-size-monitor-expand">
-                                                <div class=""></div>
-                                            </div>
-                                            <div class="chartjs-size-monitor-shrink">
-                                                <div class=""></div>
-                                            </div>
-                                        </div>
-                                        <canvas id="ProductionPieChart" width="447" height="306"
-                                                class="chartjs-render-monitor"
-                                                style="display: block; height: 245px; width: 358px;"></canvas>
-                                    </div>
-                                    <div class="mt-4 text-center small">
-                                        <span class="mr-2">
-							                <i class="fas fa-circle text-warning"></i> Buffer
-							            </span>
-                                        <span class="mr-2">
-							                <i class="fas fa-circle text-danger"></i> Market
-							            </span>
+                <!-- Content Row -->
+                <div class="row">
+
+                    <!-- Current Production -->
+                    <div class="col-xl-6 col-md-6 mb-4">
+                        <div class="card border-left-info  shadow">
+                            <!-- Card Header - Dropdown -->
+                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                <h6 class="m-0 font-weight-bold text-info">Production Ratio</h6>
+                                <div class="dropdown no-arrow">
+                                    <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                                         aria-labelledby="dropdownMenuLink">
+                                        <div class="dropdown-header">Ratio :</div>
+                                        <a class="dropdown-item" href="#" data-target="#editProductionRatio"
+                                           role="button" data-toggle="modal">Edit</a>
                                     </div>
                                 </div>
                             </div>
+                            <!-- Card Body -->
+                            <div class="card-body">
+                                <div class="chart-pie pt-4 pb-2">
+                                    <div class="chartjs-size-monitor">
+                                        <div class="chartjs-size-monitor-expand">
+                                            <div class=""></div>
+                                        </div>
+                                        <div class="chartjs-size-monitor-shrink">
+                                            <div class=""></div>
+                                        </div>
+                                    </div>
+                                    <canvas id="ProductionPieChart" width="447" height="306"
+                                            class="chartjs-render-monitor"
+                                            style="display: block; height: 245px; width: 358px;"></canvas>
+                                </div>
+                                <div class="mt-4 text-center small">
+                                        <span class="mr-2">
+							                <i class="fas fa-circle text-warning"></i> Buffer
+							            </span>
+                                    <span class="mr-2">
+							                <i class="fas fa-circle text-danger"></i> Market
+							            </span>
+                                </div>
+                            </div>
                         </div>
+                    </div>
 
 
-                        <div class="col-xl-6 col-lg-5 col-md-6">
+                    <div class="col-xl-6 col-lg-5 col-md-6">
 
-                            <div class="row">
+                        <div class="row">
 
-                                <!-- Net Production -->
-                                <div class="col-xl-6 col-md-6 mb-4">
-                                    <div class="card border-left-primary shadow py-2">
-                                        <div class="card-body">
-                                            <div class="row no-gutters align-items-center">
-                                                <div class="col mr-2">
-                                                    <div id="powerPlantStatus" class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                        Status
-                                                    </div>
-                                                    <div class="row no-gutters align-items-center">
-                                                        <div class="h5 font-weight-bold text-gray-800" style="display: contents;">
-                                                            <button id="startPowerPlant" class="btn btn-success col" type="button" data-dismiss="modal">Start</button>
-                                                            <button id="stopPowerPlant" class="btn btn-danger col" type="button" data-dismiss="modal">Stop</button>   
-                                                        </div>
+                            <!-- Net Production -->
+                            <div class="col-xl-6 col-md-6 mb-4">
+                                <div class="card border-left-primary shadow py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div id="powerPlantStatus"
+                                                     class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                    Status
+                                                </div>
+                                                <div class="row no-gutters align-items-center">
+                                                    <div class="h5 font-weight-bold text-gray-800"
+                                                         style="display: contents;">
+                                                        <button id="startPowerPlant" class="btn btn-success col"
+                                                                type="button" data-dismiss="modal">Start
+                                                        </button>
+                                                        <button id="stopPowerPlant" class="btn btn-danger col"
+                                                                type="button" data-dismiss="modal">Stop
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                <!-- Buffer filling -->
-                                <div class="col-xl-6 col-md-6 mb-4">
-                                    <div class="card border-left-warning shadow py-2">
-                                        <div class="card-body">
-                                            <div class="row no-gutters align-items-center">
-                                                <div class="col mr-2">
-                                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                                        Buffer filling
+                            <!-- Buffer filling -->
+                            <div class="col-xl-6 col-md-6 mb-4">
+                                <div class="card border-left-warning shadow py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                                    Buffer filling
+                                                </div>
+                                                <div class="row no-gutters align-items-center">
+                                                    <div class="col-auto">
+                                                        <div id="bufferFilling"
+                                                             class="h5 mb-0 mr-3 font-weight-bold text-gray-800"></div>
                                                     </div>
-                                                    <div class="row no-gutters align-items-center">
-                                                        <div class="col-auto">
-                                                            <div id="bufferFilling"
-                                                                 class="h5 mb-0 mr-3 font-weight-bold text-gray-800"></div>
-                                                        </div>
-                                                        <div class="col">
-                                                            <div class="progress progress-sm mr-2">
-                                                                <div id="bufferFillingBar" class="progress-bar bg-warning"
-                                                                     role="progressbar" style="" aria-valuemin="0"
-                                                                     aria-valuemax="100"></div>
-                                                            </div>
+                                                    <div class="col">
+                                                        <div class="progress progress-sm mr-2">
+                                                            <div id="bufferFillingBar" class="progress-bar bg-warning"
+                                                                 role="progressbar" style="" aria-valuemin="0"
+                                                                 aria-valuemax="100"></div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-auto">
-                                                    <i class="fas fa-battery-three-quarters fa-2x text-gray-300"></i>
-                                                </div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="fas fa-battery-three-quarters fa-2x text-gray-300"></i>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                <!-- Current Wind -->
-                                <div class="col-xl-6 col-md-6 mb-4" style="height: fit-content;">
-                                    <div class="card border-left-primary shadow h-100 py-2">
-                                        <div class="card-body">
-                                            <div class="row no-gutters align-items-center">
-                                                <div class="col mr-2">
-                                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                        Current Production <i class="fas fa-long-arrow-alt-right"></i> Desired
-                                                    </div>
-                                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                        <label id="currentProduction"></label>
-                                                        <i class="fas fa-long-arrow-alt-right"></i>
-                                                        <div class="col-sm-5" style="display: inline-block;padding: 0 0.5rem;">
-                                                            <input onchange="updateProduction();" id="changeProduction" type="number" class="form-control" id="" step="0.5" min="0" max="22">
-                                                        </div>
+                            <!-- Current Wind -->
+                            <div class="col-xl-6 col-md-6 mb-4" style="height: fit-content;">
+                                <div class="card border-left-primary shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                    Current Production <i class="fas fa-long-arrow-alt-right"></i>
+                                                    Desired
+                                                </div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                    <label id="currentProduction"></label>
+                                                    <i class="fas fa-long-arrow-alt-right"></i>
+                                                    <div class="col-sm-5"
+                                                         style="display: inline-block;padding: 0 0.5rem;">
+                                                        <input onchange="setNewProduction();" id="changeProduction"
+                                                               type="number" class="form-control" id="" step="0.5"
+                                                               min="0" max="22">
                                                     </div>
                                                 </div>
-                                                <div class="col-auto">
-                                                    <i class="fas fa-industry fa-2x text-gray-300"></i>
-                                                </div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="fas fa-industry fa-2x text-gray-300"></i>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                <div class="col-xl-6 col-md-6 mb-4" style="height: fit-content;">
-                                    <div class="card border-left-danger shadow h-100 py-2">
-                                        <div class="card-body">
-                                            <div class="row no-gutters align-items-center">
-                                                <div class="col mr-2">
-                                                    <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
-                                                        Current Market Demand
-                                                    </div>
-                                                    <div id="currentMarketDemand"
-                                                         class="h5 mb-0 font-weight-bold text-gray-800"></div>
+                            <div class="col-xl-6 col-md-6 mb-4" style="height: fit-content;">
+                                <div class="card border-left-danger shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                                    Current Market Demand
                                                 </div>
-                                                <div class="col-auto">
-                                                    <i class="fas fa-bolt fa-2x text-gray-300"></i>
-                                                </div>
+                                                <div id="currentMarketDemand"
+                                                     class="h5 mb-0 font-weight-bold text-gray-800"></div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="fas fa-bolt fa-2x text-gray-300"></i>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                <div class="col-xl-6 col-md-6 mb-4" style="height: fit-content;">
-                                    <div class="card border-left-danger shadow h-100 py-2">
-                                        <div class="card-body">
-                                            <div class="row no-gutters align-items-center">
-                                                <div class="col mr-2">
-                                                    <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
-                                                        Current Market Price
-                                                    </div>
-                                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                        <div class="col-sm-5" style="display: inline-block;padding: 0 0.5rem;">
-                                                            <input onchange="updatePrice();" id="currentMarketPrice" type="number" class="form-control" min="0" data-toggle="tooltip" data-placement="top" title="">
-                                                        </div>
-                                                        <label> SEK/kwh</label>
-                                                    </div>
+                            <div class="col-xl-6 col-md-6 mb-4" style="height: fit-content;">
+                                <div class="card border-left-danger shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                                    Current Market Price
                                                 </div>
-                                                <div class="col-auto">
-                                                    <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                    <div class="col-sm-5"
+                                                         style="display: inline-block;padding: 0 0.5rem;">
+                                                        <input onchange="updatePrice();" id="currentMarketPrice"
+                                                               type="number" class="form-control" min="0"
+                                                               data-toggle="tooltip" data-placement="top" title="">
+                                                    </div>
+                                                    <label> SEK/kwh</label>
                                                 </div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
                         </div>
 
@@ -392,28 +405,28 @@
 
             initModals();
 
-            sendRequests(true);
+            // sendRequests(true);
 
             setInterval(function () {
                 updateProduction();
             }, 1000);
 
-            setInterval(function () {
-                var isPopUp = false;
-                $('.modal.fade').each(function () {
-                    if (this.style.display == "block") {
-                        isPopUp = true;
-                    }
-                });
-                if (!isPopUp)
-                    sendRequests(false);
-            }, 10000);
+            // setInterval(function () {
+            //     var isPopUp = false;
+            //     $('.modal.fade').each(function () {
+            //         if (this.style.display == "block") {
+            //             isPopUp = true;
+            //         }
+            //     });
+            //     if (!isPopUp)
+            //         sendRequests(false);
+            // }, 10000);
 
             $('#productionChartform').submit(function () {
                 var productionRatioBuffer = parseFloat(($('#productionRatioBuffer').val() == "" ? 0 : $('#productionRatioBuffer').val()));
                 var productionRatioMarket = parseFloat(($('#productionRatioMarket').val() == "" ? 0 : $('#productionRatioMarket').val()));
                 if ((productionRatioBuffer + productionRatioMarket) !== 100)
-                    Templates.Modals.displayModal(createMessageModal("Error","The sum must be equal to 100", "productionRatioErrorModal"));
+                    Templates.Modals.displayModal(createMessageModal("Error", "The sum must be equal to 100", "productionRatioErrorModal"));
                 else {
                     var data = {
                         productionRatioBuffer: productionRatioBuffer / 100,
@@ -429,13 +442,13 @@
                         data: JSON.stringify(data),
                         success: function (response) {
                             var objectConstructor = ({}).constructor;
-                            if(response.constructor != objectConstructor) {
-                    			Templates.Modals.displayModal(createMessageModal("Messsage","Ratio updated", "ratioUpdatedModal"));
+                            if (response.constructor != objectConstructor) {
+                                Templates.Modals.displayModal(createMessageModal("Messsage", "Ratio updated", "ratioUpdatedModal"));
                                 sendRequests(false);
                                 $('#closeProductionChartform').click();
                                 return true;
                             } else {
-                            	Templates.Modals.displayModal(createMessageModal("Error","Ratio not updated because of an error or because these values are the current ones", "ratioNotUpdatedModal"));
+                                Templates.Modals.displayModal(createMessageModal("Error", "Ratio not updated because of an error or because these values are the current ones", "ratioNotUpdatedModal"));
                                 return false;
                             }
                         }
@@ -444,7 +457,7 @@
                 return false;
             });
 
-            $('#startPowerPlant').on('click', function(){
+            $('#startPowerPlant').on('click', function () {
                 var data = {
                     powerPlantStatus: 1,
                     token: window.localStorage.getItem('token')
@@ -490,7 +503,7 @@
                 }, 30000);
             });
 
-            $('#stopPowerPlant').on('click', function(){
+            $('#stopPowerPlant').on('click', function () {
                 $('#changeProduction').val(0);
 
                 var data = {
@@ -522,9 +535,9 @@
 
         });
 
-        function updatePrice(){
+        function updatePrice() {
             var data = {
-                marketPrice:  parseFloat($('#currentMarketPrice').val()),
+                marketPrice: parseFloat($('#currentMarketPrice').val()),
                 token: window.localStorage.getItem('token')
             };
 
@@ -544,28 +557,39 @@
             });
         }
 
-        function updateProduction(){
-            if($('#changeProduction').val() > 22)
-                $('#changeProduction').val(22);
-            else if ($('#changeProduction').val() < 0)
-                $('#changeProduction').val(0);
+        function setNewProduction() {
+            const productionSpinner = $('#changeProduction');
+            if (productionSpinner.val() > 22) {
+                productionSpinner.val(22);
+            } else if (productionSpinner.val() < 0) {
+                productionSpinner.val(0);
+            }
 
-            var production = parseFloat(($('#changeProduction').val() == "" ? 0 : $('#changeProduction').val()));
+            const newProduction = parseFloat((productionSpinner.val() === "" ? 0 : productionSpinner.val()));
 
             var data = {
-                newProduction: production,
+                newProduction,
                 token: window.localStorage.getItem('token')
             };
 
-            // call API
             $.ajax({
                 method: 'POST',
-                url: `http://${getDomain()}:8080/computePowerPlantElectricityProduction`,
+                url: `setPowerPlantElectricityProduction`,
                 dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify(data),
-                success: function (response) {console.log(response);
-                    $('#currentProduction').html(round(response) + " W");
+                success: function (response) {
+                }
+            });
+        }
+
+        function updateProduction() {
+            $.ajax({
+                method: 'GET',
+                url: `http://${getDomain()}:8080/getPowerPlantElectricityProduction?token=${window.localStorage.getItem('token')}`,
+                dataType: 'json',
+                success: function (response) {
+                    $('#currentProduction').html(round(response.newProduction) + " W");
                 }
             });
         }
@@ -579,7 +603,7 @@
                 console.log(manager[0]);
                 var electricityProduction = manager[0].powerPlantProduction;
 
-                if(isFirstCall)
+                if (isFirstCall)
                     $('#changeProduction').val(round(electricityProduction));
 
                 $('#currentMarketPrice').val(manager[0].marketPrice);
@@ -593,10 +617,10 @@
 
                 $('#productionRatioBuffer').val(productionRatioBuffer * 100);
                 $('#productionRatioMarket').val(productionRatioMarket * 100);
-                
+
                 var newBufferFilling = currentBufferFilling;
-                if(manager[0].powerPlantStatus == 0){
-                    var removeToBuffer = (parseInt(marketDemand[0]) * 100 )/ manager[0].bufferSize;
+                if (manager[0].powerPlantStatus == 0) {
+                    var removeToBuffer = (parseInt(marketDemand[0]) * 100) / manager[0].bufferSize;
                     newBufferFilling = parseInt(currentBufferFilling) - removeToBuffer;
                     if (newBufferFilling < 0) {
                         newBufferFilling = 0;
@@ -643,23 +667,23 @@
                     } else {
                         $('#accountTitle').html("Dashboard - " + manager.email);
                         $('#currentProduction').html(round(manager.powerPlantProduction) + ' W');
-                        if(manager.powerPlantStatus == 0){
+                        if (manager.powerPlantStatus == 0) {
                             var status = "Stopped";
-                            $('#stopPowerPlant').attr("disabled",true);
-                            $('#startPowerPlant').attr("disabled",false);
-                            $('#changeProduction').attr("disabled",true);
-                        } else if (manager.powerPlantStatus == 1){
+                            $('#stopPowerPlant').attr("disabled", true);
+                            $('#startPowerPlant').attr("disabled", false);
+                            $('#changeProduction').attr("disabled", true);
+                        } else if (manager.powerPlantStatus == 1) {
                             var status = "Starting";
-                            $('#startPowerPlant').attr("disabled",true);
-                            $('#stopPowerPlant').attr("disabled",false);
-                            $('#changeProduction').attr("disabled",false);
+                            $('#startPowerPlant').attr("disabled", true);
+                            $('#stopPowerPlant').attr("disabled", false);
+                            $('#changeProduction').attr("disabled", false);
                         } else {
                             var status = "Running";
-                            $('#startPowerPlant').attr("disabled",true);
-                            $('#stopPowerPlant').attr("disabled",false);
-                            $('#changeProduction').attr("disabled",false);
+                            $('#startPowerPlant').attr("disabled", true);
+                            $('#stopPowerPlant').attr("disabled", false);
+                            $('#changeProduction').attr("disabled", false);
                         }
-                        
+
                         $('#powerPlantStatus').html("Status - " + status);
                     }
                 }
@@ -686,7 +710,7 @@
                 dataType: 'json',
                 success: function (response) {
                     if (response) {
-                        $('#currentMarketPrice').attr("title","Advice : " + response.currentElectricityPrice + " SEK/kwh");
+                        $('#currentMarketPrice').attr("title", "Advice : " + response.currentElectricityPrice + " SEK/kwh");
                     }
                 }
             });
@@ -738,7 +762,7 @@
         }
 
         function initModals() {
-            const modalsCreationFunctions = [ createLoggedOutModal, createMessageModal];
+            const modalsCreationFunctions = [createLoggedOutModal, createMessageModal];
             for (const modalCreationFunction of modalsCreationFunctions) {
                 $('body').append(modalCreationFunction());
             }
