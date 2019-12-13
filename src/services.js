@@ -226,13 +226,24 @@ exports.getCurrentMarketDemand = function (token) {
                     );
                 })
                 .then(values => {
-                    console.log(values);
                     return values
-                        .map(([prosumer, consumption, production]) => Math.max(0, (consumption - production) * prosumer.consumptionRatioMarket))
+                        .map(([prosumer, consumption, production]) => computeDemand(prosumer, consumption, production))
                         .reduce((a, b) => a + b, 0);
                 });
         });
 };
+
+function computeDemand(prosumer, consumption, production) {
+    if (production >= consumption) {
+        return 0;
+    } else {
+        if ((consumption - production) * prosumer.consumptionRatioBuffer <= prosumer.bufferFilling) {
+            return (consumption - production) * prosumer.consumptionRatioMarket
+        } else {
+            return consumption - production - prosumer.bufferFilling;
+        }
+    }
+}
 
 exports.getProsumers = function (token) {
     const databaseName = DATABASE_NAME;
