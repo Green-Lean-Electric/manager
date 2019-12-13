@@ -164,12 +164,12 @@
 
                             <!-- Net Production -->
                             <div class="col-xl-6 col-md-6 mb-4">
-                                <div class="card border-left-primary shadow py-2">
+                                <div class="card border-left-info shadow py-2">
                                     <div class="card-body">
                                         <div class="row no-gutters align-items-center">
                                             <div class="col mr-2">
                                                 <div id="powerPlantStatus"
-                                                     class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                     class="text-xs font-weight-bold text-info text-uppercase mb-1">
                                                     Status
                                                 </div>
                                                 <div class="row no-gutters align-items-center">
@@ -222,11 +222,11 @@
 
                             <!-- Current Wind -->
                             <div class="col-xl-6 col-md-6 mb-4" style="height: fit-content;">
-                                <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card border-left-info shadow h-100 py-2">
                                     <div class="card-body">
                                         <div class="row no-gutters align-items-center">
                                             <div class="col mr-2">
-                                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
                                                     Current Production <i class="fas fa-long-arrow-alt-right"></i>
                                                     Desired
                                                 </div>
@@ -250,11 +250,11 @@
                             </div>
 
                             <div class="col-xl-6 col-md-6 mb-4" style="height: fit-content;">
-                                <div class="card border-left-danger shadow h-100 py-2">
+                                <div class="card border-left-primary shadow h-100 py-2">
                                     <div class="card-body">
                                         <div class="row no-gutters align-items-center">
                                             <div class="col mr-2">
-                                                <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                                     Current Market Demand
                                                 </div>
                                                 <div id="currentMarketDemand"
@@ -294,6 +294,24 @@
                                 </div>
                             </div>
 
+                            <div class="col-xl-6 col-md-6 mb-4" style="height: fit-content;">
+                                <div class="card border-left-success shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                                    Current Market Quantity
+                                                </div>
+                                                <div id="currentMarketQuantity"
+                                                     class="h5 mb-0 font-weight-bold text-gray-800"></div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="fas fa-bolt fa-2x text-gray-300"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- ./End Content Row -->
@@ -607,9 +625,10 @@
                     $('#changeProduction').val(round(electricityProduction, 100));
 
                 $('#currentMarketPrice').val(manager[0].marketPrice);
+                $('#currentMarketQuantity').html(round(manager[0].marketQuantityAvailable, 100) + " W");
 
                 var currentBufferFilling = round(('bufferFilling' in manager[0] ? manager[0].bufferFilling : 0), 100);
-                $('#bufferFilling').html(currentBufferFilling);
+                $('#bufferFilling').html(currentBufferFilling  + " %");
                 $("#bufferFillingBar").width(currentBufferFilling + "%");
 
                 var productionRatioBuffer = manager[0].productionRatioBuffer;
@@ -618,6 +637,7 @@
                 $('#productionRatioBuffer').val(productionRatioBuffer * 100);
                 $('#productionRatioMarket').val(productionRatioMarket * 100);
 
+                var newMarketQuantity = manager[0].marketQuantityAvailable;
                 var newBufferFilling = currentBufferFilling;
                 if (manager[0].powerPlantStatus == 0) {
                     var removeToBuffer = (parseInt(marketDemand[0]) * 100) / manager[0].bufferSize;
@@ -631,10 +651,12 @@
                     if (newBufferFilling >= 100) {
                         newBufferFilling = 100;
                     }
+                    newMarketQuantity = newMarketQuantity + productionRatioMarket*electricityProduction;
                 }
 
                 var data = {
                     bufferFilling: newBufferFilling,
+                    marketQuantityAvailable: newMarketQuantity,
                     token: window.localStorage.getItem('token')
                 };
 
@@ -696,8 +718,8 @@
                 url: '/getCurrentMarketDemand?token=' + window.localStorage.getItem('token'),
                 dataType: 'json',
                 success: function (response) {
-                    if (!isNaN(response)) {
-                        $('#currentMarketDemand').html(round(response, 1000) + " kwh");
+                    if (!isNaN(response)) {console.log(response);
+                        $('#currentMarketDemand').html(round(response, 100) + " W");
                     }
                 }
             });
