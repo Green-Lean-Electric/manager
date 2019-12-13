@@ -411,16 +411,16 @@
                 updateProduction();
             }, 1000);
 
-            // setInterval(function () {
-            //     var isPopUp = false;
-            //     $('.modal.fade').each(function () {
-            //         if (this.style.display == "block") {
-            //             isPopUp = true;
-            //         }
-            //     });
-            //     if (!isPopUp)
-            //         sendRequests(false);
-            // }, 10000);
+            setInterval(function () {
+                var isPopUp = false;
+                $('.modal.fade').each(function () {
+                    if (this.style.display == "block") {
+                        isPopUp = true;
+                    }
+                });
+                if (!isPopUp)
+                    sendRequests(false);
+            }, 10000);
 
             $('#productionChartform').submit(function () {
                 var productionRatioBuffer = parseFloat(($('#productionRatioBuffer').val() == "" ? 0 : $('#productionRatioBuffer').val()));
@@ -589,7 +589,7 @@
                 url: `http://${getDomain()}:8080/getPowerPlantElectricityProduction?token=${window.localStorage.getItem('token')}`,
                 dataType: 'json',
                 success: function (response) {
-                    $('#currentProduction').html(round(response.newProduction) + " W");
+                    $('#currentProduction').html(round(response.newProduction, 100) + " W");
                 }
             });
         }
@@ -604,11 +604,11 @@
                 var electricityProduction = manager[0].powerPlantProduction;
 
                 if (isFirstCall)
-                    $('#changeProduction').val(round(electricityProduction));
+                    $('#changeProduction').val(round(electricityProduction, 100));
 
                 $('#currentMarketPrice').val(manager[0].marketPrice);
 
-                var currentBufferFilling = round(('bufferFilling' in manager[0] ? manager[0].bufferFilling : 0));
+                var currentBufferFilling = round(('bufferFilling' in manager[0] ? manager[0].bufferFilling : 0), 100);
                 $('#bufferFilling').html(currentBufferFilling);
                 $("#bufferFillingBar").width(currentBufferFilling + "%");
 
@@ -661,12 +661,12 @@
                 method: 'GET',
                 url: '/getManagerLogged?token=' + window.localStorage.getItem('token'),
                 dataType: 'json',
-                success: function (manager) {
+                success: function (manager) {console.log(manager);
                     if ($.isEmptyObject(manager)) {
                         window.location = "index.html";
                     } else {
                         $('#accountTitle').html("Dashboard - " + manager.email);
-                        $('#currentProduction').html(round(manager.powerPlantProduction) + ' W');
+                        $('#currentProduction').html(round(manager.powerPlantProduction, 100) + ' W');
                         if (manager.powerPlantStatus == 0) {
                             var status = "Stopped";
                             $('#stopPowerPlant').attr("disabled", true);
@@ -697,7 +697,7 @@
                 dataType: 'json',
                 success: function (response) {
                     if (!isNaN(response)) {
-                        $('#currentMarketDemand').html(round(response) + " kwh");
+                        $('#currentMarketDemand').html(round(response, 1000) + " kwh");
                     }
                 }
             });
@@ -716,8 +716,8 @@
             });
         }
 
-        function round(number) {
-            return (Math.round(number * 100) / 100);
+        function round(number, howmuch) {
+            return (Math.round(number * howmuch) / howmuch);
         }
 
         function drawProductionPieChart(pchart_buffer_percent, pchart_market_percent, electricityProduction) {
@@ -733,7 +733,7 @@
                 data: {
                     labels: ["Buffer", "Market"],
                     datasets: [{
-                        data: [round(pchart_buffer), round(pchart_market)],
+                        data: [round(pchart_buffer, 100), round(pchart_market, 100)],
                         backgroundColor: ['#f6c23e', '#e74a3b'],
                         hoverBackgroundColor: ['#F4B619', '#E02D1B'],
                         hoverBorderColor: "rgba(234, 236, 244, 1)",

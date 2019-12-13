@@ -7,21 +7,9 @@ const configuration = require('../../utils/src/configuration');
 
 const DATABASE_NAME = 'greenleanelectrics';
 
-function hashPassword(pwd) {
-    var hash = 0;
-    if (pwd.length === 0) return hash;
-    for (i = 0; i < pwd.length; i++) {
-        char = pwd.charCodeAt(i);
-        hash = ((hash << 5) - hash) + char;
-        hash = hash & hash; // Convert to 32bit integer
-    }
-    return hash;
-}
-
 exports.insertManager = function (data) {
     const databaseName = DATABASE_NAME;
     const collectionName = 'managers';
-    data.password = hashPassword(data.password);
     console.log(data);
     var registrationToken = generateToken();
     data.registrationToken = registrationToken;
@@ -69,7 +57,6 @@ exports.accountVerification = function (registrationToken) {
 exports.connectManager = function (data) {
     const databaseName = DATABASE_NAME;
     const collectionName = 'managers';
-    data.password = hashPassword(data.password);
 
     return database.find(databaseName, collectionName, data)
         .then((results) => {
