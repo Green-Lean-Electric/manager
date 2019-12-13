@@ -140,16 +140,18 @@ exports.updateData = function (data) {
     delete data.token;
 
     var updateOperation;
-    if (data.length > 1)
+    if (data.length > 1) {
         updateOperation = {
             $set: {
                 data
             }
         };
-    else
-        updateOperation = {
-            $set: data
-        };
+    }
+    else {
+            updateOperation = {
+                $set: data
+            };
+        }
     console.log(updateOperation);
     return database
         .updateOne(databaseName, collectionName, {token}, updateOperation)
@@ -319,7 +321,7 @@ exports.blockProsumer = function(data){
                     });
             }
         });
-}
+};
 
 exports.setPowerPlantElectricityProduction = function (token, newProduction) {
     const databaseName = DATABASE_NAME;
