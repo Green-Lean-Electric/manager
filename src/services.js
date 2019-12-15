@@ -10,11 +10,11 @@ const DATABASE_NAME = 'greenleanelectrics';
 exports.insertManager = function (data) {
     const databaseName = DATABASE_NAME;
     const collectionName = 'managers';
-    console.log(data);
-    var registrationToken = generateToken();
+    const registrationToken = generateToken();
     data.registrationToken = registrationToken;
 
-    return database.find(databaseName, collectionName, {"email": data.email})
+    return database
+        .find(databaseName, collectionName, {email: data.email})
         .then((results) => {
             if (results.length >= 1) {
                 console.log("This email is already used.");
@@ -24,15 +24,19 @@ exports.insertManager = function (data) {
                 server.sendEmail(
                     'no-reply@greenleanelectric.com',
                     data.email,
-                    'Account Verification',//TODO Change url
+                    'Account Verification',
+                    //TODO Change url
                     `To activate your account click on the following link : <a href="http://${url}/accountVerification?registrationToken=${registrationToken}">Click Here</a>`
+                );
+
+                database.updateOne(
+                    databaseName, 'powerPlants', {}, {'$push': {managers: data.email}}
                 );
 
                 return database
                     .insertOne(databaseName, collectionName, data);
             }
         });
-
 };
 
 exports.accountVerification = function (registrationToken) {
@@ -122,13 +126,26 @@ exports.getManagerLogged = function (token) {
 
     return database
         .find(databaseName, collectionName, {token})
-        .then((results) => {
-            if (results.length === 1) {
-                delete results[0].password;
-                delete results[0]._id;
-                return results[0];
+        .then(managers => {
+            if (managers.length === 1) {
+                let manager = managers[0];
+                delete manager.password;
+                delete manager._id;
+                return manager;
             }
-            return {};
+            throw 'Unknown manager';
+        })
+        .then(manager => {
+            return Promise.all([
+                manager,
+                getPowerPlant(manager.email)
+            ]);
+        })
+        .then(([manager, powerPlant]) => {
+            delete powerPlant.managers;
+            delete powerPlant._id;
+            manager.powerPlant = powerPlant;
+            return manager;
         });
 };
 
@@ -136,23 +153,22 @@ exports.updateData = function (data) {
     const databaseName = DATABASE_NAME;
     const collectionName = 'managers';
 
-    var token = data.token;
+    const token = data.token;
     delete data.token;
 
-    var updateOperation;
+    let updateOperation;
     if (data.length > 1) {
         updateOperation = {
             $set: {
                 data
             }
         };
+    } else {
+        updateOperation = {
+            $set: data
+        };
     }
-    else {
-            updateOperation = {
-                $set: data
-            };
-        }
-    console.log(updateOperation);
+
     return database
         .updateOne(databaseName, collectionName, {token}, updateOperation)
         .then((nModified) => {
@@ -217,25 +233,16 @@ exports.getCurrentMarketDemand = function (token) {
             return database
                 .find(databaseName, collectionName, data)
                 .then(prosumers => {
-                    return Promise.all(
-                        prosumers.map(
-                            prosumer => Promise.all([
-                                new Promise(resolve => resolve(prosumer)),
-                                getElectricityConsumption(prosumer.email),
-                                getElectricityProduction(prosumer.email)
-                            ])
-                        )
-                    );
-                })
-                .then(values => {
-                    return values
-                        .map(([prosumer, consumption, production]) => computeDemand(prosumer, consumption, production))
-                        .reduce((a, b) => a + b, 0);
+                    return prosumers.map(
+                        prosumer => computeDemand(prosumer, prosumer.consumption, prosumer.production)
+                    ).reduce((a, b) => a + b, 0);
                 });
         });
 };
 
-function computeDemand(prosumer, consumption, production) {console.log(production); console.log(consumption);
+function computeDemand(prosumer, consumption, production) {
+    console.log(production);
+    console.log(consumption);
     if (production >= consumption) {
         return 0;
     } else {
@@ -263,31 +270,12 @@ exports.getProsumers = function (token) {
                 collectionName = 'prosumers';
                 return database
                     .find(databaseName, collectionName, {})
-                    .then((prosumers) => {
-                        return Promise.all(
-                            prosumers.map(
-                                prosumer => Promise.all([
-                                    new Promise(resolve => resolve(prosumer)),
-                                    getElectricityConsumption(prosumer.email),
-                                    getElectricityProduction(prosumer.email)
-                                ])
-                            )
-                        );
-                    }).then((values) => {console.log(values);
-                        return values
-                            .map(([prosumer, consumption, production]) => {
-                                prosumer.consumption = consumption;
-                                prosumer.production = production;
-                                return prosumer;
-                            });
-                    });
             }
-            return {};
-
+            throw 'Unknown manager';
         });
 };
 
-exports.blockProsumer = function(data){
+exports.blockProsumer = function (data) {
     const databaseName = DATABASE_NAME;
     var collectionName = 'managers';
 
@@ -302,13 +290,14 @@ exports.blockProsumer = function(data){
                 collectionName = 'prosumers';
                 return database
                     .find(databaseName, collectionName, {email: data.prosumerID})
-                    .then((prosumer) => {console.log(prosumer[0].email);
+                    .then((prosumer) => {
+                        console.log(prosumer[0].email);
                         var updateOperation = {
-                                $set: {
-                                    initBlockedTime : Date.now(),
-                                    blockedTime : data.blockedTime
-                                }
-                            };
+                            $set: {
+                                initBlockedTime: Date.now(),
+                                blockedTime: data.blockedTime
+                            }
+                        };
                         return database
                             .updateOne(databaseName, collectionName, {email: prosumer[0].email}, updateOperation)
                             .then((nModified) => {
@@ -325,100 +314,73 @@ exports.blockProsumer = function(data){
         });
 };
 
-exports.setPowerPlantElectricityProduction = function (token, newProduction) {
+exports.setPowerPlantElectricityProduction = function (token, futureProduction) {
     const databaseName = DATABASE_NAME;
-    const collectionName = 'managers';
     return database
-        .find(databaseName, collectionName, {token})
+        .find(databaseName, 'managers', {token})
         .then(managers => managers[0])
-        .then(manager => database.updateOne(databaseName, collectionName, manager, {
+        .then(manager => getPowerPlant(manager.email))
+        .then(powerPlant => database.updateOne(databaseName, 'powerPlants', {
+            _id: powerPlant._id
+        }, {
             $set:
                 {
                     productionModificationTime: Date.now(),
-                    newProduction,
-                    powerPlantProduction: server.computeLinearFunction(
-                        manager.powerPlantProduction || 0,
-                        manager.newProduction || 0,
+                    futureProduction,
+                    oldProduction: powerPlant.currentProduction,
+                    currentProduction: server.computeLinearFunction(
+                        powerPlant.currentProduction || 0,
+                        powerPlant.futureProduction || 0,
                         30,
-                        (Date.now() - manager.productionModificationTime) / 1000
+                        (Date.now() - powerPlant.productionModificationTime) / 1000
                     )
                 }
         }))
-        .then(count => {return {count}})
+        .then(count => {
+            return {count}
+        })
         .catch(e => {
             console.error(e);
             return undefined;
         });
 };
 
-/**
- * Create an option object representing the simulator server path.
- * @returns {{hostname: (string), port: string}}
- */
-function getSimulatorHttpOptions() {
-    const simulatorServer = require('../../utils/src/configuration')
-        .serversConfiguration
-        .simulator;
+exports.getMarket = function () {
+    return database.findLast(DATABASE_NAME, 'market', {}, 'date');
+};
 
-    return {
-        hostname: simulatorServer.hostname,
-        port: simulatorServer.port
-    };
-}
-
-function getElectricityConsumption(prosumerId) {
-    let options = Object.assign(getSimulatorHttpOptions(), {
-        path: '/getElectricityConsumption?' + querystring.stringify({prosumerId}),
-        method: 'GET'
-    });
-
-    return httpRequest(options).then(result => {
-        return result.electricityConsumption;
-    });
-}
-
-function getElectricityProduction(prosumerId) {
-    let options = Object.assign(getSimulatorHttpOptions(), {
-        path: '/getElectricityProduction?' + querystring.stringify({prosumerId}),
-        method: 'GET'
-    });
-
-    return httpRequest(options).then(production => {
-        return production;
-    });
-}
+exports.setNewPrice = function (token, price) {
+    return database
+        .find(DATABASE_NAME, 'managers', {token})
+        .then(managers => {
+            if (managers.length === 1) {
+                let manager = managers[0];
+                delete manager.password;
+                delete manager._id;
+                return manager;
+            }
+            throw 'Unknown manager';
+        }).then(() => {
+            return database.findLast(DATABASE_NAME, 'market', {}, 'date')
+                .then(market => {
+                    const newMarket = {
+                        electricity: market.electricity,
+                        computedPrice: market.computedPrice,
+                        actualPrice: price,
+                        date: Date.now()
+                    };
+                    return database.insertOne(DATABASE_NAME, 'market', newMarket);
+                })
+        });
+};
 
 function generateToken() {
     const crypto = require("crypto");
     return crypto.randomBytes(16).toString("hex");
 }
 
-// TODO Centraliser dans utils
-function httpRequest(options, postData) {
-    return new Promise(function (resolve, reject) {
-        const request = http.request(options, function (reply) {
-            if (reply.statusCode < 200 || reply.statusCode >= 300) {
-                return reject(new Error('status=' + reply.statusCode));
-            }
-            let body = [];
-            reply.on('data', function (chunk) {
-                body.push(chunk);
-            });
-            reply.on('end', function () {
-                try {
-                    body = JSON.parse(Buffer.concat(body).toString());
-                } catch (error) {
-                    reject(error);
-                }
-                resolve(body);
-            });
-        });
-        request.on('error', function (error) {
-            reject(error);
-        });
-        if (postData) {
-            request.write(postData);
-        }
-        request.end();
-    });
+function getPowerPlant(managerId) {
+    return database.find(DATABASE_NAME, 'powerPlants', {
+        managers: managerId
+    }).then(powerPlants => powerPlants[0]);
 }
