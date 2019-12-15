@@ -412,8 +412,8 @@
     <script src="js/green-lean-electrics.js"></script>
 
     <script>
-        // Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
-        // Chart.defaults.global.defaultFontColor = '#858796';
+        Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+        Chart.defaults.global.defaultFontColor = '#858796';
 
         $(document).ready(function () {
 
@@ -423,7 +423,7 @@
 
             initModals();
 
-            sendRequests(true);
+            //sendRequests(true);
 
             setInterval(function () {
                 updateProduction();
@@ -527,6 +527,7 @@
                 var data = {
                     powerPlantStatus: 0,
                     powerPlantProduction: 0,
+                    newProduction: 0,
                     token: window.localStorage.getItem('token')
                 };
 
@@ -608,6 +609,7 @@
                 dataType: 'json',
                 success: function (response) {
                     $('#currentProduction').html(round(response.newProduction, 100) + " W");
+                    $('#currentProduction').data("value",round(response.newProduction, 100));
                 }
             });
         }
@@ -619,7 +621,7 @@
                 getCurrentElectricityPrice()
             ).done(function (manager, marketDemand, electricityPrice) {
                 console.log(manager[0]);
-                var electricityProduction = manager[0].powerPlantProduction;
+                var electricityProduction = $('#currentProduction').data("value");
 
                 if (isFirstCall)
                     $('#changeProduction').val(round(electricityProduction, 100));
@@ -646,14 +648,14 @@
                         newBufferFilling = 0;
                     }
                 } else {
-                    var addToBuffer = drawProductionPieChart(productionRatioBuffer, productionRatioMarket, electricityProduction, electricityProduction);
+                    var addToBuffer = drawProductionPieChart(productionRatioBuffer, productionRatioMarket, electricityProduction);
                     newBufferFilling = currentBufferFilling + addToBuffer;
                     if (newBufferFilling >= 100) {
                         newBufferFilling = 100;
                     }
                     newMarketQuantity = newMarketQuantity + productionRatioMarket*electricityProduction;
                 }
-
+                
                 var data = {
                     bufferFilling: newBufferFilling,
                     marketQuantityAvailable: newMarketQuantity,
@@ -688,7 +690,6 @@
                         window.location = "index.html";
                     } else {
                         $('#accountTitle').html("Dashboard - " + manager.email);
-                        $('#currentProduction').html(round(manager.powerPlantProduction, 100) + ' W');
                         if (manager.powerPlantStatus == 0) {
                             var status = "Stopped";
                             $('#stopPowerPlant').attr("disabled", true);
@@ -745,7 +746,9 @@
         function drawProductionPieChart(pchart_buffer_percent, pchart_market_percent, electricityProduction) {
             // Pie Charts
             var ctx = document.getElementById("ProductionPieChart");
-
+console.log(pchart_buffer_percent);
+console.log(pchart_market_percent);
+console.log(electricityProduction);
             var pchart_buffer = (pchart_buffer_percent * electricityProduction * 100) / electricityProduction;
             var pchart_market = (pchart_market_percent * electricityProduction * 100) / electricityProduction;
             var bufferFilling = pchart_buffer;

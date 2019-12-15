@@ -235,13 +235,15 @@ exports.getCurrentMarketDemand = function (token) {
         });
 };
 
-function computeDemand(prosumer, consumption, production) {
+function computeDemand(prosumer, consumption, production) {console.log(production); console.log(consumption);
     if (production >= consumption) {
         return 0;
     } else {
         if ((consumption - production) * prosumer.consumptionRatioBuffer <= prosumer.bufferFilling) {
-            return (consumption - production) * prosumer.consumptionRatioMarket
+            console.log((consumption - production) * prosumer.consumptionRatioMarket);
+            return (consumption - production) * prosumer.consumptionRatioMarket;
         } else {
+            console.log(consumption - production - prosumer.bufferFilling);
             return consumption - production - prosumer.bufferFilling;
         }
     }
