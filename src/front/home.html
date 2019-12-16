@@ -425,7 +425,7 @@
 
         initModals();
 
-        sendRequests(true);
+        sendRequests();
 
         setInterval(function () {
             var isPopUp = false;
@@ -435,7 +435,7 @@
                 }
             });
             if (!isPopUp) {
-                sendRequests(false);
+                sendRequests();
             }
         }, 1000);
 
@@ -472,7 +472,7 @@
                         var objectConstructor = ({}).constructor;
                         if (response.constructor !== objectConstructor) {
                             Templates.Modals.displayModal(createMessageModal("Messsage", "Ratio updated", "ratioUpdatedModal"));
-                            sendRequests(false);
+                            sendRequests();
                             $('#closeProductionChartform').click();
                             return true;
                         } else {
@@ -554,8 +554,8 @@
         });
     }
 
-    function sendRequests(isFirstCall) {
-        getManagerLogged(isFirstCall);
+    function sendRequests() {
+        getManagerLogged();
         getMarket();
     }
 
@@ -597,16 +597,14 @@
         });
     }
 
-    function updatePowerPlantData(powerPlant, isFirstCall) {
+    function updatePowerPlantData(powerPlant) {
         const currentProductionElement = $('#currentProduction');
         currentProductionElement.html(round(powerPlant.currentProduction, 100) + " W");
         currentProductionElement.data("value", round(powerPlant.currentProduction, 100));
 
         const electricityProduction = currentProductionElement.data("value");
 
-        if (isFirstCall) {
-            $('#changeProduction').val(round(electricityProduction, 100));
-        }
+        $('#changeProduction').val(round(powerPlant.futureProduction, 100));
 
         var currentBufferFilling = round(powerPlant.bufferFilling*100 / powerPlant.bufferSize , 100);
         $('#bufferFilling').html(currentBufferFilling + " %");

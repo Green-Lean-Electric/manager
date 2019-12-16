@@ -216,46 +216,6 @@ exports.retrieveManagerPicturePath = function (token) {
         });
 };
 
-exports.getCurrentMarketDemand = function (token) {
-    const databaseName = DATABASE_NAME;
-    const collectionName = 'managers';
-    console.log(token);
-    return database.find(databaseName, collectionName, {token})
-        .then(results => {
-            if (results.length === 1) {
-                return results[0];
-            }
-            throw `No known manager with this token: ${token}`;
-        }).then(() => {
-            const collectionName = 'prosumers';
-
-            const data = {"registrationToken": {"$exists": false}};
-            return database
-                .find(databaseName, collectionName, data)
-                .then(prosumers => {
-                    return prosumers.map(
-                        prosumer => computeDemand(prosumer, prosumer.consumption, prosumer.production)
-                    ).reduce((a, b) => a + b, 0);
-                });
-        });
-};
-
-function computeDemand(prosumer, consumption, production) {
-    console.log(production);
-    console.log(consumption);
-    if (production >= consumption) {
-        return 0;
-    } else {
-        if ((consumption - production) * prosumer.consumptionRatioBuffer <= prosumer.bufferFilling) {
-            console.log((consumption - production) * prosumer.consumptionRatioMarket);
-            return (consumption - production) * prosumer.consumptionRatioMarket;
-        } else {
-            console.log(consumption - production - prosumer.bufferFilling);
-            return consumption - production - prosumer.bufferFilling;
-        }
-    }
-}
-
 exports.getProsumers = function (token) {
     const databaseName = DATABASE_NAME;
     var collectionName = 'managers';
@@ -395,7 +355,7 @@ exports.setNewPrice = function (token, price) {
         });
 };
 
-exports.setRatios = function(token, ratioBuffer, ratioMarket) {
+exports.setRatios = function (token, ratioBuffer, ratioMarket) {
     if (ratioBuffer < 0 || ratioBuffer > 1 || ratioMarket < 0 || ratioMarket > 1) {
         throw 'A ratio should be between 0 and 1';
     }

@@ -19,7 +19,6 @@ const routes = {
         '/accountVerification': (_, parameters, res) => service.accountVerification(parameters.registrationToken)
             .then(path => server.serveStaticFile(path, res)),
         '/deleteAccount': (_, parameters) => service.deleteAccount(parameters.token),
-        '/getCurrentMarketDemand': (_, parameters) => service.getCurrentMarketDemand(parameters.token),
         '/getProsumers':(_, parameters) => service.getProsumers(parameters.token),
         '/blockProsumer': (_, parameters) => service.blockProsumer(parameters),
         '/setPowerPlantElectricityProduction': (_, parameters) => service.setPowerPlantElectricityProduction(parameters.token, parameters.newProduction, parameters.force),
