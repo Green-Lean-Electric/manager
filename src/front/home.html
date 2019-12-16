@@ -236,7 +236,7 @@
                                                     <div class="col-sm-5"
                                                          style="display: inline-block;padding: 0 0.5rem;">
                                                         <input onchange="setNewProduction();" id="changeProduction"
-                                                               type="number" class="form-control" id="" step="0.5"
+                                                               type="number" class="form-control" step="0.5"
                                                                min="0" max="22">
                                                     </div>
                                                 </div>
@@ -360,7 +360,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Change your production ratio</h5>
+                    <h5 class="modal-title">Change your production ratio</h5>
                     <button class="close" type="button" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
@@ -396,417 +396,312 @@
         </div>
     </div>
 
-    <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</div>
 
-    <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+<!-- Bootstrap core JavaScript-->
+<script src="vendor/jquery/jquery.min.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
+<!-- Core plugin JavaScript-->
+<script src="vendor/jquery-easing/jquery.easing.min.js"></script>
 
-    <!-- Page level plugins -->
-    <script src="vendor/chart.js/Chart.min.js"></script>
+<!-- Custom scripts for all pages-->
+<script src="js/sb-admin-2.min.js"></script>
 
-    <script src="js/green-lean-electrics.js"></script>
+<!-- Page level plugins -->
+<script src="vendor/chart.js/Chart.min.js"></script>
 
-    <script>
-        Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
-        Chart.defaults.global.defaultFontColor = '#858796';
+<script src="js/green-lean-electrics.js"></script>
 
-        $(document).ready(function () {
+<script>
+    Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+    Chart.defaults.global.defaultFontColor = '#858796';
 
-            $('#logout').on('click', function () {
-                sendLogoutForm("manager");
-            });
+    $(document).ready(function () {
 
-            initModals();
-
-            //sendRequests(true);
-
-            setInterval(function () {
-                updateProduction();
-            }, 1000);
-
-            setInterval(function () {
-                var isPopUp = false;
-                $('.modal.fade').each(function () {
-                    if (this.style.display == "block") {
-                        isPopUp = true;
-                    }
-                });
-                if (!isPopUp)
-                    sendRequests(false);
-            }, 10000);
-
-            $('#productionChartform').submit(function () {
-                var productionRatioBuffer = parseFloat(($('#productionRatioBuffer').val() == "" ? 0 : $('#productionRatioBuffer').val()));
-                var productionRatioMarket = parseFloat(($('#productionRatioMarket').val() == "" ? 0 : $('#productionRatioMarket').val()));
-                if ((productionRatioBuffer + productionRatioMarket) !== 100)
-                    Templates.Modals.displayModal(createMessageModal("Error", "The sum must be equal to 100", "productionRatioErrorModal"));
-                else {
-                    var data = {
-                        productionRatioBuffer: productionRatioBuffer / 100,
-                        productionRatioMarket: productionRatioMarket / 100,
-                        token: window.localStorage.getItem('token')
-                    };
-                    // call API
-                    $.ajax({
-                        method: 'POST',
-                        url: '/updateData',
-                        dataType: 'json',
-                        contentType: 'application/json',
-                        data: JSON.stringify(data),
-                        success: function (response) {
-                            var objectConstructor = ({}).constructor;
-                            if (response.constructor != objectConstructor) {
-                                Templates.Modals.displayModal(createMessageModal("Messsage", "Ratio updated", "ratioUpdatedModal"));
-                                sendRequests(false);
-                                $('#closeProductionChartform').click();
-                                return true;
-                            } else {
-                                Templates.Modals.displayModal(createMessageModal("Error", "Ratio not updated because of an error or because these values are the current ones", "ratioNotUpdatedModal"));
-                                return false;
-                            }
-                        }
-                    });
-                }
-                return false;
-            });
-
-            $('#startPowerPlant').on('click', function () {
-                var data = {
-                    powerPlantStatus: 1,
-                    token: window.localStorage.getItem('token')
-                };
-
-                $.ajax({
-                    method: 'POST',
-                    url: '/updateData', //TODO Regrouper en 1 fonction
-                    dataType: 'json',
-                    contentType: 'application/json',
-                    data: JSON.stringify(data),
-                    success: function (response) {
-                        if (JSON.parse(response)) {
-                            sendRequests(false);
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
-                });
-
-                setTimeout(function () {
-                    var data = {
-                        powerPlantStatus: 2,
-                        token: window.localStorage.getItem('token')
-                    };
-
-                    $.ajax({
-                        method: 'POST',
-                        url: '/updateData', //TODO Regrouper en 1 fonction
-                        dataType: 'json',
-                        contentType: 'application/json',
-                        data: JSON.stringify(data),
-                        success: function (response) {
-                            if (JSON.parse(response)) {
-                                sendRequests(false);
-                                return true;
-                            } else {
-                                return false;
-                            }
-                        }
-                    });
-                }, 30000);
-            });
-
-            $('#stopPowerPlant').on('click', function () {
-                $('#changeProduction').val(0);
-
-                var data = {
-                    powerPlantStatus: 0,
-                    powerPlantProduction: 0,
-                    newProduction: 0,
-                    token: window.localStorage.getItem('token')
-                };
-
-                $.ajax({
-                    method: 'POST',
-                    url: '/updateData',
-                    dataType: 'json',
-                    contentType: 'application/json',
-                    data: JSON.stringify(data),
-                    success: function (response) {
-                        if (JSON.parse(response)) {
-                            sendRequests(false);
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
-                });
-            });
-
-            $(function () {
-                $('[data-toggle="tooltip"]').tooltip()
-            });
-
+        $('#logout').on('click', function () {
+            sendLogoutForm("manager");
         });
 
-        function updatePrice() {
-            var data = {
-                marketPrice: parseFloat($('#currentMarketPrice').val()),
-                token: window.localStorage.getItem('token')
-            };
+        initModals();
 
-            $.ajax({
-                method: 'POST',
-                url: '/updateData',
-                dataType: 'json',
-                contentType: 'application/json',
-                data: JSON.stringify(data),
-                success: function (response) {
-                    if (response) {
-                        return true;
-                    } else {
-                        return false;
-                    }
+        sendRequests();
+
+        setInterval(function () {
+            var isPopUp = false;
+            $('.modal.fade').each(function () {
+                if (this.style.display === "block") {
+                    isPopUp = true;
                 }
             });
-        }
-
-        function setNewProduction() {
-            const productionSpinner = $('#changeProduction');
-            if (productionSpinner.val() > 22) {
-                productionSpinner.val(22);
-            } else if (productionSpinner.val() < 0) {
-                productionSpinner.val(0);
+            if (!isPopUp) {
+                sendRequests();
             }
+        }, 1000);
 
-            const newProduction = parseFloat((productionSpinner.val() === "" ? 0 : productionSpinner.val()));
+        $('#productionChartform').submit(function () {
+            const ratioBufferElement = $('#productionRatioBuffer').val();
+            const productionRatioBuffer = parseFloat(
+                ratioBufferElement === ""
+                    ? 0
+                    : ratioBufferElement
+            );
+            const ratioMarketElement = $('#productionRatioMarket').val();
+            const productionRatioMarket = parseFloat(
+                ratioMarketElement === ""
+                    ? 0
+                    : ratioMarketElement
+            );
 
-            var data = {
-                newProduction,
-                token: window.localStorage.getItem('token')
-            };
-
-            $.ajax({
-                method: 'POST',
-                url: `setPowerPlantElectricityProduction`,
-                dataType: 'json',
-                contentType: 'application/json',
-                data: JSON.stringify(data),
-                success: function (response) {
-                }
-            });
-        }
-
-        function updateProduction() {
-            $.ajax({
-                method: 'GET',
-                url: `http://${getDomain()}:8080/getPowerPlantElectricityProduction?token=${window.localStorage.getItem('token')}`,
-                dataType: 'json',
-                success: function (response) {
-                    $('#currentProduction').html(round(response.newProduction, 100) + " W");
-                    $('#currentProduction').data("value",round(response.newProduction, 100));
-                }
-            });
-        }
-
-        function sendRequests(isFirstCall) {
-            $.when(
-                getManagerLogged(),
-                getCurrentMarketDemand(),
-                getCurrentElectricityPrice()
-            ).done(function (manager, marketDemand, electricityPrice) {
-                console.log(manager[0]);
-                var electricityProduction = $('#currentProduction').data("value");
-
-                if (isFirstCall)
-                    $('#changeProduction').val(round(electricityProduction, 100));
-
-                $('#currentMarketPrice').val(manager[0].marketPrice);
-                $('#currentMarketQuantity').html(round(manager[0].marketQuantityAvailable, 100) + " W");
-
-                var currentBufferFilling = round(('bufferFilling' in manager[0] ? manager[0].bufferFilling : 0), 100);
-                $('#bufferFilling').html(currentBufferFilling  + " %");
-                $("#bufferFillingBar").width(currentBufferFilling + "%");
-
-                var productionRatioBuffer = manager[0].productionRatioBuffer;
-                var productionRatioMarket = manager[0].productionRatioMarket;
-
-                $('#productionRatioBuffer').val(productionRatioBuffer * 100);
-                $('#productionRatioMarket').val(productionRatioMarket * 100);
-
-                var newMarketQuantity = manager[0].marketQuantityAvailable;
-                var newBufferFilling = currentBufferFilling;
-                if (manager[0].powerPlantStatus == 0) {
-                    var removeToBuffer = (parseInt(marketDemand[0]) * 100) / manager[0].bufferSize;
-                    newBufferFilling = parseInt(currentBufferFilling) - removeToBuffer;
-                    if (newBufferFilling < 0) {
-                        newBufferFilling = 0;
-                    }
-                } else {
-                    var addToBuffer = drawProductionPieChart(productionRatioBuffer, productionRatioMarket, electricityProduction);
-                    newBufferFilling = currentBufferFilling + addToBuffer;
-                    if (newBufferFilling >= 100) {
-                        newBufferFilling = 100;
-                    }
-                    newMarketQuantity = newMarketQuantity + productionRatioMarket*electricityProduction;
-                }
-                
-                var data = {
-                    bufferFilling: newBufferFilling,
-                    marketQuantityAvailable: newMarketQuantity,
+            if ((productionRatioBuffer + productionRatioMarket) !== 100) {
+                Templates.Modals.displayModal(createMessageModal("Error", "The sum must be equal to 100", "productionRatioErrorModal"));
+            } else {
+                const data = {
+                    ratioBuffer: productionRatioBuffer / 100,
+                    ratioMarket: productionRatioMarket / 100,
                     token: window.localStorage.getItem('token')
                 };
-
+                // call API
                 $.ajax({
                     method: 'POST',
-                    url: '/updateData',
+                    url: '/updateRatios',
                     dataType: 'json',
                     contentType: 'application/json',
                     data: JSON.stringify(data),
                     success: function (response) {
-                        if (response) {
+                        var objectConstructor = ({}).constructor;
+                        if (response.constructor !== objectConstructor) {
+                            Templates.Modals.displayModal(createMessageModal("Messsage", "Ratio updated", "ratioUpdatedModal"));
+                            sendRequests();
+                            $('#closeProductionChartform').click();
                             return true;
                         } else {
+                            Templates.Modals.displayModal(createMessageModal("Error", "Ratio not updated because of an error", "ratioNotUpdatedModal"));
                             return false;
                         }
                     }
                 });
-
-            });
-        }
-
-        function getManagerLogged() {
-            return $.ajax({
-                method: 'GET',
-                url: '/getManagerLogged?token=' + window.localStorage.getItem('token'),
-                dataType: 'json',
-                success: function (manager) {console.log(manager);
-                    if ($.isEmptyObject(manager)) {
-                        window.location = "index.html";
-                    } else {
-                        $('#accountTitle').html("Dashboard - " + manager.email);
-                        if (manager.powerPlantStatus == 0) {
-                            var status = "Stopped";
-                            $('#stopPowerPlant').attr("disabled", true);
-                            $('#startPowerPlant').attr("disabled", false);
-                            $('#changeProduction').attr("disabled", true);
-                        } else if (manager.powerPlantStatus == 1) {
-                            var status = "Starting";
-                            $('#startPowerPlant').attr("disabled", true);
-                            $('#stopPowerPlant').attr("disabled", false);
-                            $('#changeProduction').attr("disabled", false);
-                        } else {
-                            var status = "Running";
-                            $('#startPowerPlant').attr("disabled", true);
-                            $('#stopPowerPlant').attr("disabled", false);
-                            $('#changeProduction').attr("disabled", false);
-                        }
-
-                        $('#powerPlantStatus').html("Status - " + status);
-                    }
-                }
-            });
-        }
-
-        function getCurrentMarketDemand() {
-            return $.ajax({
-                method: 'GET',
-                url: '/getCurrentMarketDemand?token=' + window.localStorage.getItem('token'),
-                dataType: 'json',
-                success: function (response) {
-                    if (!isNaN(response)) {console.log(response);
-                        $('#currentMarketDemand').html(round(response, 100) + " W");
-                    }
-                }
-            });
-        }
-
-        function getCurrentElectricityPrice() {
-            return $.ajax({
-                method: 'GET',
-                url: `http://${getDomain()}:8080/getCurrentElectricityPrice`,
-                dataType: 'json',
-                success: function (response) {
-                    if (response) {
-                        $('#currentMarketPrice').attr("title", "Advice : " + response.currentElectricityPrice + " SEK/kwh");
-                    }
-                }
-            });
-        }
-
-        function round(number, howmuch) {
-            return (Math.round(number * howmuch) / howmuch);
-        }
-
-        function drawProductionPieChart(pchart_buffer_percent, pchart_market_percent, electricityProduction) {
-            // Pie Charts
-            var ctx = document.getElementById("ProductionPieChart");
-console.log(pchart_buffer_percent);
-console.log(pchart_market_percent);
-console.log(electricityProduction);
-            var pchart_buffer = (pchart_buffer_percent * electricityProduction * 100) / electricityProduction;
-            var pchart_market = (pchart_market_percent * electricityProduction * 100) / electricityProduction;
-            var bufferFilling = pchart_buffer;
-
-            var myPieChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ["Buffer", "Market"],
-                    datasets: [{
-                        data: [round(pchart_buffer, 100), round(pchart_market, 100)],
-                        backgroundColor: ['#f6c23e', '#e74a3b'],
-                        hoverBackgroundColor: ['#F4B619', '#E02D1B'],
-                        hoverBorderColor: "rgba(234, 236, 244, 1)",
-                    }],
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    tooltips: {
-                        backgroundColor: "rgb(255,255,255)",
-                        bodyFontColor: "#858796",
-                        borderColor: '#dddfeb',
-                        borderWidth: 1,
-                        xPadding: 15,
-                        yPadding: 15,
-                        displayColors: false,
-                        caretPadding: 10,
-                    },
-                    legend: {
-                        display: false
-                    },
-                    cutoutPercentage: 80,
-                },
-            });
-
-            return bufferFilling;
-        }
-
-        function initModals() {
-            const modalsCreationFunctions = [createLoggedOutModal, createMessageModal];
-            for (const modalCreationFunction of modalsCreationFunctions) {
-                $('body').append(modalCreationFunction());
             }
+            return false;
+        });
+
+        $('#startPowerPlant').on('click', function () {
+            $('#stopPowerPlant').attr("disabled", true);
+            $('#startPowerPlant').attr("disabled", true);
+            $('#changeProduction').attr("disabled", true);
+
+            $('#changeProduction').val(10);
+            setNewProduction();
+        });
+
+        $('#stopPowerPlant').on('click', function () {
+            $('#stopPowerPlant').attr("disabled", true);
+            $('#startPowerPlant').attr("disabled", true);
+            $('#changeProduction').attr("disabled", true);
+
+            $('#changeProduction').val(0);
+            setNewProduction(true);
+        });
+
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        });
+
+    });
+
+    function updatePrice() {
+        const data = {
+            price: parseFloat($('#currentMarketPrice').val()),
+            token: window.localStorage.getItem('token')
+        };
+
+        $.ajax({
+            method: 'POST',
+            url: '/setNewPrice',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function (response) {
+                return !!response;
+            }
+        });
+    }
+
+    function setNewProduction(force) {
+        const productionSpinner = $('#changeProduction');
+        if (productionSpinner.val() > 22) {
+            productionSpinner.val(22);
+        } else if (productionSpinner.val() < 0) {
+            productionSpinner.val(0);
         }
 
+        const newProduction = parseFloat((productionSpinner.val() === "" ? 0 : productionSpinner.val()));
 
-        function createLoggedOutModal() {
-            return Templates.Modals.createModal(
-                'Log out',
-                'You are now logged out.',
-                'loggedOutModal',
-                [
-                    ['Ok', () => location.assign('/')]
-                ],
-                () => location.assign('/')
-            );
+        const data = {
+            newProduction,
+            token: window.localStorage.getItem('token'),
+            force: !!force
+        };
+
+        $.ajax({
+            method: 'POST',
+            url: `/setPowerPlantElectricityProduction`,
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function (response) {
+            }
+        });
+    }
+
+    function sendRequests() {
+        getManagerLogged();
+        getMarket();
+    }
+
+    function getManagerLogged() {
+        return $.ajax({
+            method: 'GET',
+            url: '/getManagerLogged?token=' + window.localStorage.getItem('token'),
+            dataType: 'json',
+            success: function (manager) {
+                console.log(manager);
+                if ($.isEmptyObject(manager)) {
+                    window.location = "index.html";
+                } else {
+                    const powerPlant = manager.powerPlant;
+                    updatePowerPlantData(powerPlant);
+
+                    $('#accountTitle').html("Dashboard - " + manager.email);
+                    let status;
+                    if (powerPlant.status === 0) {
+                        status = "Stopped";
+                        $('#stopPowerPlant').attr("disabled", true);
+                        $('#startPowerPlant').attr("disabled", false);
+                        $('#changeProduction').attr("disabled", true);
+                    } else if (powerPlant.status === 1) {
+                        status = "Starting";
+                        $('#startPowerPlant').attr("disabled", true);
+                        $('#stopPowerPlant').attr("disabled", false);
+                        $('#changeProduction').attr("disabled", false);
+                    } else {
+                        status = "Running";
+                        $('#startPowerPlant').attr("disabled", true);
+                        $('#stopPowerPlant').attr("disabled", false);
+                        $('#changeProduction').attr("disabled", false);
+                    }
+
+                    $('#powerPlantStatus').html("Status - " + status);
+                }
+            }
+        });
+    }
+
+    function updatePowerPlantData(powerPlant) {
+        const currentProductionElement = $('#currentProduction');
+        currentProductionElement.html(round(powerPlant.currentProduction, 100) + " W");
+        currentProductionElement.data("value", round(powerPlant.currentProduction, 100));
+
+        const electricityProduction = currentProductionElement.data("value");
+
+        $('#changeProduction').val(round(powerPlant.futureProduction, 100));
+
+        var currentBufferFilling = round(powerPlant.bufferFilling*100 / powerPlant.bufferSize , 100);
+        $('#bufferFilling').html(currentBufferFilling + " %");
+        $("#bufferFillingBar").width(currentBufferFilling + "%");
+
+        const productionRatioBuffer = powerPlant.productionRatioBuffer;
+        const productionRatioMarket = powerPlant.productionRatioMarket;
+
+        $('#productionRatioBuffer').val(productionRatioBuffer * 100);
+        $('#productionRatioMarket').val(productionRatioMarket * 100);
+
+        if (powerPlant.powerPlantStatus !== 0) {
+            drawProductionPieChart(productionRatioBuffer, productionRatioMarket, electricityProduction);
         }
+    }
 
-    </script>
+    function getMarket() {
+        return $.ajax({
+            method: 'GET',
+            url: '/getMarket',
+            dataType: 'json',
+            success: function (market) {
+                if (market) {
+                    $('#currentMarketDemand').html(round(market.demand || 0, 100) + " W");
+                    $('#currentMarketPrice').attr("title", "Advice : " + market.computedPrice + " SEK/kwh");
+                    $('#currentMarketPrice').val(market.actualPrice);
+                    $('#currentMarketQuantity').html(round(market.electricity, 100) + " W");
+                }
+            }
+        });
+    }
+
+    function round(number, howmuch) {
+        return (Math.round(number * howmuch) / howmuch);
+    }
+
+    function drawProductionPieChart(pchart_buffer_percent, pchart_market_percent, electricityProduction) {
+        // Pie Charts
+        var ctx = document.getElementById("ProductionPieChart");
+        var pchart_buffer = (pchart_buffer_percent * electricityProduction * 100) / electricityProduction;
+        var pchart_market = (pchart_market_percent * electricityProduction * 100) / electricityProduction;
+        var bufferFilling = pchart_buffer;
+
+        var myPieChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ["Buffer", "Market"],
+                datasets: [{
+                    data: [round(pchart_buffer, 100), round(pchart_market, 100)],
+                    backgroundColor: ['#f6c23e', '#e74a3b'],
+                    hoverBackgroundColor: ['#F4B619', '#E02D1B'],
+                    hoverBorderColor: "rgba(234, 236, 244, 1)",
+                }],
+            },
+            options: {
+                maintainAspectRatio: false,
+                tooltips: {
+                    backgroundColor: "rgb(255,255,255)",
+                    bodyFontColor: "#858796",
+                    borderColor: '#dddfeb',
+                    borderWidth: 1,
+                    xPadding: 15,
+                    yPadding: 15,
+                    displayColors: false,
+                    caretPadding: 10,
+                },
+                legend: {
+                    display: false
+                },
+                cutoutPercentage: 80,
+            },
+        });
+
+        return bufferFilling;
+    }
+
+    function initModals() {
+        const modalsCreationFunctions = [createLoggedOutModal, createMessageModal];
+        for (const modalCreationFunction of modalsCreationFunctions) {
+            $('body').append(modalCreationFunction());
+        }
+    }
+
+
+    function createLoggedOutModal() {
+        return Templates.Modals.createModal(
+            'Log out',
+            'You are now logged out.',
+            'loggedOutModal',
+            [
+                ['Ok', () => location.assign('/')]
+            ],
+            () => location.assign('/')
+        );
+    }
+
+</script>
 
 </body>
 

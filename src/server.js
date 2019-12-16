@@ -8,26 +8,27 @@ const port = configuration
     .port;
 
 const routes = {
-        '/managerSignUp': (request, parameters) => service.insertManager(parameters),
-        '/managerLogin': (request, parameters) => service.connectManager(parameters),
-        '/managerLogout': (request, parameters) => service.disconnectManager(parameters.token),
-        '/getManagerLogged': (request, parameters) => service.getManagerLogged(parameters.token),
-        '/updateData': (request, parameters) => service.updateData(parameters),
+        '/managerSignUp': (_, parameters) => service.insertManager(parameters),
+        '/managerLogin': (_, parameters) => service.connectManager(parameters),
+        '/managerLogout': (_, parameters) => service.disconnectManager(parameters.token),
+        '/getManagerLogged': (_, parameters) => service.getManagerLogged(parameters.token),
+        '/updateData': (_, parameters) => service.updateData(parameters),
         '/uploadPicture': (_, [parameters, picturePath]) => service.uploadManagerPicture(parameters, picturePath), //TODO put in utils ? common for prosuemr and manager
-        '/retrievePicture': (request, parameters, res) => service.retrieveManagerPicturePath(parameters.token) //TODO same
+        '/retrievePicture': (_, parameters, res) => service.retrieveManagerPicturePath(parameters.token) //TODO same
             .then(path => server.serveStaticFile(path, res)),
-        '/accountVerification': (request, parameters, res) => service.accountVerification(parameters.registrationToken)
+        '/accountVerification': (_, parameters, res) => service.accountVerification(parameters.registrationToken)
             .then(path => server.serveStaticFile(path, res)),
-        '/deleteAccount': (request, parameters) => service.deleteAccount(parameters.token),
-        '/getCurrentMarketDemand': (request, parameters) => service.getCurrentMarketDemand(parameters.token),
-        '/getProsumers':(request, parameters) => service.getProsumers(parameters.token),
-        '/blockProsumer': (request, parameters) => service.blockProsumer(parameters),
-        '/setPowerPlantElectricityProduction': (request, parameters) => service.setPowerPlantElectricityProduction(parameters.token, parameters.newProduction)
+        '/deleteAccount': (_, parameters) => service.deleteAccount(parameters.token),
+        '/getProsumers':(_, parameters) => service.getProsumers(parameters.token),
+        '/blockProsumer': (_, parameters) => service.blockProsumer(parameters),
+        '/setPowerPlantElectricityProduction': (_, parameters) => service.setPowerPlantElectricityProduction(parameters.token, parameters.newProduction, parameters.force),
+        '/getMarket': () => service.getMarket(),
+        '/setNewPrice': (_, parameters) => service.setNewPrice(parameters.token, parameters.price),
+        '/updateRatios': (_, parameters) => service.setRatios(parameters.token, parameters.ratioBuffer, parameters.ratioMarket)
     }
 ;
 
 const staticFiles = {
-    '/test': __dirname + '/files/file.txt',
     '/': __dirname + '/front/index.html'
 };
 
