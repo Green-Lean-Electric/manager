@@ -22,9 +22,10 @@ const routes = {
         '/getCurrentMarketDemand': (_, parameters) => service.getCurrentMarketDemand(parameters.token),
         '/getProsumers':(_, parameters) => service.getProsumers(parameters.token),
         '/blockProsumer': (_, parameters) => service.blockProsumer(parameters),
-        '/setPowerPlantElectricityProduction': (_, parameters) => service.setPowerPlantElectricityProduction(parameters.token, parameters.newProduction),
+        '/setPowerPlantElectricityProduction': (_, parameters) => service.setPowerPlantElectricityProduction(parameters.token, parameters.newProduction, parameters.force),
         '/getMarket': () => service.getMarket(),
-        '/setNewPrice': (_, parameters) => service.setNewPrice(parameters.token, parameters.price)
+        '/setNewPrice': (_, parameters) => service.setNewPrice(parameters.token, parameters.price),
+        '/updateRatios': (_, parameters) => service.setRatios(parameters.token, parameters.ratioBuffer, parameters.ratioMarket)
     }
 ;
 

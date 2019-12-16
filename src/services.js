@@ -314,28 +314,49 @@ exports.blockProsumer = function (data) {
         });
 };
 
-exports.setPowerPlantElectricityProduction = function (token, futureProduction) {
+exports.setPowerPlantElectricityProduction = function (token, futureProduction, force) {
     const databaseName = DATABASE_NAME;
     return database
         .find(databaseName, 'managers', {token})
         .then(managers => managers[0])
         .then(manager => getPowerPlant(manager.email))
-        .then(powerPlant => database.updateOne(databaseName, 'powerPlants', {
-            _id: powerPlant._id
-        }, {
-            $set:
-                {
-                    productionModificationTime: Date.now(),
-                    futureProduction,
-                    oldProduction: powerPlant.currentProduction,
-                    currentProduction: server.computeLinearFunction(
-                        powerPlant.currentProduction || 0,
-                        powerPlant.futureProduction || 0,
-                        30,
-                        (Date.now() - powerPlant.productionModificationTime) / 1000
-                    )
-                }
-        }))
+        .then(powerPlant => {
+            const now = Date.now();
+            let currentProduction;
+            let oldProduction;
+            let status;
+            if (force) {
+                currentProduction = futureProduction;
+                oldProduction = futureProduction;
+                status = futureProduction === 0
+                    ? 0
+                    : 2;
+            } else {
+                currentProduction = powerPlant.currentProduction;
+                oldProduction = powerPlant.currentProduction;
+
+                // If the old production is 0, the plant was stopped so it's now starting.
+                // If the current production is 0, then the plant is stopped.
+                // Otherwise it's running.
+                status = powerPlant.oldProduction === 0 && futureProduction > 0
+                    ? 1
+                    : powerPlant.currentProduction === 0
+                        ? 0
+                        : 2;
+            }
+            return database.updateOne(databaseName, 'powerPlants', {
+                _id: powerPlant._id
+            }, {
+                $set:
+                    {
+                        status,
+                        productionModificationTime: now,
+                        futureProduction,
+                        oldProduction,
+                        currentProduction
+                    }
+            });
+        })
         .then(count => {
             return {count}
         })
@@ -371,6 +392,37 @@ exports.setNewPrice = function (token, price) {
                     };
                     return database.insertOne(DATABASE_NAME, 'market', newMarket);
                 })
+        });
+};
+
+exports.setRatios = function(token, ratioBuffer, ratioMarket) {
+    if (ratioBuffer < 0 || ratioBuffer > 1 || ratioMarket < 0 || ratioMarket > 1) {
+        throw 'A ratio should be between 0 and 1';
+    }
+    if (ratioBuffer + ratioMarket !== 1) {
+        throw 'The sum of the ratios should be 1.';
+    }
+    return database
+        .find(DATABASE_NAME, 'managers', {token})
+        .then(managers => managers[0])
+        .then(manager => getPowerPlant(manager.email))
+        .then(powerPlant => {
+            return database.updateOne(DATABASE_NAME, 'powerPlants', {
+                _id: powerPlant._id
+            }, {
+                $set:
+                    {
+                        productionRatioBuffer: ratioBuffer,
+                        productionRatioMarket: ratioMarket
+                    }
+            });
+        })
+        .then(count => {
+            return true;
+        })
+        .catch(e => {
+            console.error(e);
+            return undefined;
         });
 };
 
