@@ -121,6 +121,7 @@
                                             <th>Is Logged</th>
                                             <th>Production</th>
                                             <th>Consumption</th>
+                                            <th>Black Out</th>
                                             <th>Block</th>
                                         </tr>
                                     </thead>
@@ -131,6 +132,7 @@
                                             <th>Is Logged</th>
                                             <th>Production</th>
                                             <th>Consumption</th>
+                                            <th>Black Out</th>
                                             <th>Block</th>
                                         </tr>
                                     </tfoot>
@@ -261,56 +263,6 @@
                 getProsumers(),
             ).done(function (manager, prosumers){
                 console.log(manager);
-
-                /*var currentBufferFilling = round(('bufferFilling' in prosumer[0] ? prosumer[0].bufferFilling : 0));
-                $('#bufferFilling').html(currentBufferFilling);
-                $("#bufferFillingBar").width(currentBufferFilling + "%");
-
-                var netProduction = electricityProduction[0] - electricityConsumption[0].electricityConsumption;
-                $('#netProduction').html(round(netProduction) + " kwh");
-
-                var productionRatioBuffer = prosumer[0].productionRatioBuffer;
-                var productionRatioMarket = prosumer[0].productionRatioMarket;
-                var consumptionRatioBuffer = prosumer[0].consumptionRatioBuffer;
-                var consumptionRatioMarket = prosumer[0].consumptionRatioMarket;
-
-                $('#productionRatioBuffer').val(productionRatioBuffer * 100);
-                $('#productionRatioMarket').val(productionRatioMarket * 100);
-                $('#consumptionRatioBuffer').val(consumptionRatioBuffer * 100);
-                $('#consumptionRatioMarket').val(consumptionRatioMarket * 100);
-
-                $('#netProduction').html(round(netProduction) + " kwh");
-
-                var addToBuffer = drawProductionPieChart(productionRatioBuffer, productionRatioMarket, electricityConsumption[0].electricityConsumption, electricityProduction[0], netProduction);
-
-                var removeFromBuffer = drawConsumptionPieChart(consumptionRatioBuffer, consumptionRatioMarket, electricityConsumption[0].electricityConsumption, electricityProduction[0], netProduction);
-                console.log(addToBuffer);
-                console.log(removeFromBuffer);
-                var newBufferFilling = currentBufferFilling + addToBuffer - removeFromBuffer;
-                if (newBufferFilling > 100) {
-                    newBufferFilling == 100
-                }
-
-                var data = {
-                    bufferFilling: newBufferFilling,
-                    token: window.localStorage.getItem('token')
-                };
-
-                $.ajax({
-                    method: 'POST',
-                    url: '/updateData',
-                    dataType: 'json',
-                    contentType: 'application/json',
-                    data: JSON.stringify(data),
-                    success: function (response) {
-                        if (JSON.parse(response)) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
-                });*/
-
             });
         }
 
@@ -347,6 +299,8 @@
                                 +"</td>"
                                 + "<td>" + round(item.production) + "</td>"
                                 + "<td>" + round(item.consumption) + "</td>"
+                                + "<td" + (item.blackOut ? " style=\"background: black; color: red; font-weight: bold; text-align: center;\"" : "") +">"
+                                +"</td>"
                                 + "<td>" 
                                     + "<a href=\"#\" class=\"btn btn-danger btn-circle btn-sm \" data-target=\"#blockProsumerModal\" role=\"button\" data-toggle=\"modal\" aria-haspopup=\"true\" aria-expanded=\"false\" onclick=\"$('#prosumerToBlock').val('" + item.email + "')\">"
                                         + "<i class=\"fas fa-ban\"></i>"

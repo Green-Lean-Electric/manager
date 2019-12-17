@@ -628,7 +628,7 @@
             url: '/getMarket',
             dataType: 'json',
             success: function (market) {
-                if (market) {
+                if (market) {console.log(market);
                     $('#currentMarketDemand').html(round(market.demand || 0, 100) + " W");
                     $('#currentMarketPrice').attr("title", "Advice : " + market.computedPrice + " SEK/kwh");
                     $('#currentMarketPrice').val(market.actualPrice);
