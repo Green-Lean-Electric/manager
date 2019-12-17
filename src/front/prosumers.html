@@ -299,8 +299,11 @@
                                 +"</td>"
                                 + "<td>" + round(item.production) + "</td>"
                                 + "<td>" + round(item.consumption) + "</td>"
-                                + "<td" + (item.blackOut ? " style=\"background: black; color: red; font-weight: bold; text-align: center;\"" : "") +">"
-                                +"</td>"
+                                + (item.blackOut ?
+                                    "<td style=\"background: black; color: red; font-weight: bold; text-align: center;\">Black Out</td>"
+                                : 
+                                    "<td></td>"
+                                )
                                 + "<td>" 
                                     + "<a href=\"#\" class=\"btn btn-danger btn-circle btn-sm \" data-target=\"#blockProsumerModal\" role=\"button\" data-toggle=\"modal\" aria-haspopup=\"true\" aria-expanded=\"false\" onclick=\"$('#prosumerToBlock').val('" + item.email + "')\">"
                                         + "<i class=\"fas fa-ban\"></i>"
