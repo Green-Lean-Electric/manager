@@ -458,7 +458,7 @@
                     ratioMarket: productionRatioMarket / 100,
                     token: window.localStorage.getItem('token')
                 };
-                // call API
+
                 $.ajax({
                     method: 'POST',
                     url: '/updateRatios',
@@ -636,7 +636,7 @@
     }
 
     function drawProductionPieChart(pchart_buffer_percent, pchart_market_percent, electricityProduction) {
-        // Pie Charts
+
         var ctx = document.getElementById("ProductionPieChart");
         var pchart_buffer = (pchart_buffer_percent * electricityProduction * 100) / electricityProduction;
         var pchart_market = (pchart_market_percent * electricityProduction * 100) / electricityProduction;

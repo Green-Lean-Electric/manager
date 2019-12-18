@@ -25,7 +25,6 @@ exports.insertManager = function (data) {
                     'no-reply@greenleanelectric.com',
                     data.email,
                     'Account Verification',
-                    //TODO Change url
                     `To activate your account click on the following link : <a href="http://${url}/accountVerification?registrationToken=${registrationToken}">Click Here</a>`
                 );
 
@@ -151,25 +150,20 @@ exports.getManagerLogged = function (token) {
         });
 };
 
-exports.updateData = function (data) {
+
+exports.updateCredentials = function (data) {
     const databaseName = DATABASE_NAME;
     const collectionName = 'managers';
 
     const token = data.token;
     delete data.token;
 
-    let updateOperation;
-    if (data.length > 1) {
-        updateOperation = {
+    let updateOperation = {
             $set: {
-                data
+                firstname: data.firstname,
+                lastname: data.lastname
             }
         };
-    } else {
-        updateOperation = {
-            $set: data
-        };
-    }
 
     return database
         .updateOne(databaseName, collectionName, {token}, updateOperation)
