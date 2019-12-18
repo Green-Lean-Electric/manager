@@ -150,7 +150,6 @@ exports.getManagerLogged = function (token) {
         });
 };
 
-
 exports.updateCredentials = function (data) {
     const databaseName = DATABASE_NAME;
     const collectionName = 'managers';
@@ -170,6 +169,36 @@ exports.updateCredentials = function (data) {
         .then((nModified) => {
             if (nModified !== 0) {
                 return true;
+            } else {
+                console.log(`User not found or data already with the same values`);
+                return {};
+            }
+        });
+};
+
+exports.updateProsumerCredentials = function (data) {
+    const databaseName = DATABASE_NAME;
+    var collectionName = 'managers';
+
+    const token = data.token;
+    let updateOperation = {
+            $set: {
+                email: data.email,
+                password: data.password
+            }
+        };
+
+    return database.find(databaseName, collectionName, {token})
+        .then((results) => {
+            if (results.length === 1) {
+                collectionName = 'prosumers';
+                var email = data.oldemail;
+
+                return database.updateOne(databaseName, collectionName, {email}, updateOperation)
+                .then(() => {
+                    console.log(`User credentials updated.`);
+                    return true;
+                });
             } else {
                 console.log(`User not found or data already with the same values`);
                 return {};

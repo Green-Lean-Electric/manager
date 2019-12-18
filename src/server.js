@@ -24,7 +24,8 @@ const routes = {
         '/setPowerPlantElectricityProduction': (_, parameters) => service.setPowerPlantElectricityProduction(parameters.token, parameters.newProduction, parameters.force),
         '/getMarket': () => service.getMarket(),
         '/setNewPrice': (_, parameters) => service.setNewPrice(parameters.token, parameters.price),
-        '/updateRatios': (_, parameters) => service.setRatios(parameters.token, parameters.ratioBuffer, parameters.ratioMarket)
+        '/updateRatios': (_, parameters) => service.setRatios(parameters.token, parameters.ratioBuffer, parameters.ratioMarket),
+        '/updateProsumerCredentials': (_, parameters) => service.updateProsumerCredentials(parameters),
     }
 ;
 

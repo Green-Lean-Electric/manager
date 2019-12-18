@@ -123,6 +123,7 @@
                                             <th>Consumption</th>
                                             <th>Black Out</th>
                                             <th>Block</th>
+                                            <th>Edit</th>
                                             <th>Delete</th>
                                         </tr>
                                     </thead>
@@ -135,6 +136,7 @@
                                             <th>Consumption</th>
                                             <th>Black Out</th>
                                             <th>Block</th>
+                                            <th>Edit</th>
                                             <th>Delete</th>
                                         </tr>
                                     </tfoot>
@@ -209,7 +211,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button id="closeConsumptionChartform" class="btn btn-secondary" type="button" data-dismiss="modal">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">
                     Cancel
                 </button>
                 <input class="btn btn-primary btn-user btn-block" style="width: fit-content;" type="submit"
@@ -219,6 +221,47 @@
         </div>
     </div>
 
+
+    <!-- Edit Prosumer Modal-->
+    <div class="modal fade" id="editProsumerModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Block prosumer</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="user" method="post">
+                    <div class="form-group row">
+                        <div class="col-sm-12">
+                            <input type="email" id="emailProsumerToEdit" class="form-control form-control-user" placeholder="Email Address">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-6 mb-3 mb-sm-0">
+                            <input type="password" id="pwdProsumerToEdit" class="form-control form-control-user" placeholder="Password">
+                        </div>
+                        <div class="col-sm-6">
+                            <input type="password" id="repwdProsumerToEdit" class="form-control form-control-user" placeholder="Repeat Password">
+                    </div>
+
+                    <input type="password" id="oldProsumerEmail" class="form-control form-control-user" hidden>
+                    <input type="password" id="oldPassword" class="form-control form-control-user" hidden>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">
+                    Cancel
+                </button>
+                <input class="btn btn-primary btn-user btn-block" style="width: fit-content;" type="submit"
+                       value="Validate" onclick="editProsumer();">
+            </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Delete Prosumer Modal-->
     <div class="modal fade" id="deleteProsumerModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -241,7 +284,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button id="closeConsumptionChartform" class="btn btn-secondary" type="button" data-dismiss="modal">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">
                     Cancel
                 </button>
                 <input class="btn btn-primary btn-user btn-block" style="width: fit-content;" type="submit"
@@ -322,7 +365,7 @@
                 dataType: 'json',
                 success: function (prosumers) {
                     if (!$.isEmptyObject(prosumers)) {
-                        prosumers.forEach(function(item){
+                        prosumers.forEach(function(item){console.log(item);
                             var htmlProsumer = $( "<tr>"
                                 + "<td>" + item.email + "</td>"
                                 + "<td>" + item.bufferFilling + "</td>"
@@ -338,6 +381,11 @@
                                 )
                                 + "<td>" 
                                     + "<a href=\"#\" class=\"btn btn-danger btn-circle btn-sm \" data-target=\"#blockProsumerModal\" role=\"button\" data-toggle=\"modal\" aria-haspopup=\"true\" aria-expanded=\"false\" onclick=\"$('#prosumerToBlock').val('" + item.email + "')\">"
+                                        + "<i class=\"fas fa-ban\"></i>"
+                                    + "</a>"
+                                + "</td>"
+                                + "<td>" 
+                                    + "<a href=\"#\" class=\"btn btn-warning btn-circle btn-sm \" data-target=\"#editProsumerModal\" role=\"button\" data-toggle=\"modal\" aria-haspopup=\"true\" aria-expanded=\"false\" onclick=\"$('#emailProsumerToEdit').val('" + item.email + "'); $('#oldPassword').val('"+ item.password +"'); $('#oldProsumerEmail').val('" + item.email + "'); $('#oldPassword').val('"+ item.password +"');\">"
                                         + "<i class=\"fas fa-ban\"></i>"
                                     + "</a>"
                                 + "</td>"
@@ -386,6 +434,51 @@
                         }
                     }
                 });
+        }
+
+        function editProsumer(){
+            var email = $('#emailProsumerToEdit').val();
+            var pwd = $('#pwdProsumerToEdit').val();
+            var repwd = $('#repwdProsumerToEdit').val();
+            var oldemail = $('#oldProsumerEmail').val();
+
+            if(pwd == repwd && (pwd == '' || checkPassword(pwd))){
+                let password;
+                if(pwd == '')
+                    password = parseInt($('#oldPassword').val());
+                else
+                    password = hashPassword(pwd);
+                
+                const data = {
+                    email: email, 
+                    password: password,
+                    oldemail: oldemail,
+                    token: window.localStorage.getItem('token')
+                };
+
+                blockView();
+                return $.ajax({
+                    method: 'POST',
+                    url: '/updateProsumerCredentials',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function (response) {
+                        unblockView();
+                        if (JSON.parse(response)) {
+                            Templates.Modals.displayModal(createMessageModal("Messsage","Prosumer Credentials Changed", "prosumerEdited"));
+                            sendRequests();
+                            $('#editProsumerModal .close').click();
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                });
+
+            } else {
+                Templates.Modals.displayModal(createMessageModal("Error","Registration was unsuccessful, please check your email and password. (Your password must have between 6 to 20 characters which contain at least one numeric digit, one uppercase and one lowercase letter !)", "signUpWrongDatasModal"));
+            }
         }
 
         function deleteProsumerAccount() {
