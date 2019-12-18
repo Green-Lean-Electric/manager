@@ -149,6 +149,20 @@
                                                       <input type="text" readonly class="form-control-plaintext" id="staticLastname">
                                                     </div>
                                                 </div>
+                                                <div class="form-group row password-div" style="display: none;">
+                                                    <label for="staticLastname" class="col-sm-2 col-form-label">Password</label>
+                                                    <div class="col-sm-6 mb-3 mb-sm-0">
+                                                        <input type="password" id="newPwd" class="form-control form-control-user" placeholder="Password">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row password-div" style="display: none;">
+                                                    <label for="staticLastname" class="col-sm-2 col-form-label">Repeat Password</label>
+                                                    <div class="col-sm-6">
+                                                        <input type="password" id="reNewPwd" class="form-control form-control-user" placeholder="Repeat Password">
+                                                    </div>
+                                                </div>
+
+                                                <input type="password" id="oldPwd" class="form-control form-control-user" hidden>
                                                 <div class="modal-footer" style="display: none;">
                                                     <input class="btn btn-success btn-user btn-block" style="width: fit-content;" type="submit" value="Validate">
                                                     <button class="btn btn-secondary" type="button" onclick="closeCredentialsForm()">Cancel</button>
@@ -261,26 +275,46 @@
             });
 
             $('#credentialsform').submit(function(){
-                 var data = {
-                    firstname: $('#staticFirstname').val(),
-                    lastname: $('#staticLastname').val(),
-                    token: window.localStorage.getItem('token')
-                };
+                var pwd = $('#newPwd').val();
+                var repwd = $('#reNewPwd').val();
 
-                $.ajax({
-                    method: 'POST',
-                    url: '/updateCredentials',
-                    dataType: 'json',
-                    contentType: 'application/json',
-                    data: JSON.stringify(data),
-                    success: function (response) {
-                        if (JSON.parse(response)) {
-                            return true;
-                        } else {
-                            return false;
+                if(pwd == repwd && (pwd == '' || checkPassword(pwd))){
+                    let password;
+                    if(pwd == '')
+                        password = parseInt($('#oldPwd').val());
+                    else
+                        password = hashPassword(pwd);
+                    
+                    const data = {
+                        email: $('#staticEmail').val(), 
+                        password: password,
+                        firstname: $('#staticFirstname').val(),
+                        lastname: $('#staticLastname').val(),
+                        token: window.localStorage.getItem('token')
+                    };
+console.log(data);
+                    blockView();
+                    return $.ajax({
+                        method: 'POST',
+                        url: '/updateCredentials',
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        data: JSON.stringify(data),
+                        success: function (response) {
+                            unblockView();
+                            if (JSON.parse(response)) {
+                                Templates.Modals.displayModal(createMessageModal("Messsage","Credentials Changed", "credentialsEdited"));
+                                sendRequests();
+                                return true;
+                            } else {
+                                return false;
+                            }
                         }
-                    }
-                });
+                    });
+
+                } else {
+                    Templates.Modals.displayModal(createMessageModal("Error","Registration was unsuccessful, please check your email and password. (Your password must have between 6 to 20 characters which contain at least one numeric digit, one uppercase and one lowercase letter !)", "signUpWrongDatasModal"));
+                }
             });
 
             retrieveProfilePicture();
@@ -290,22 +324,20 @@
             $('#credentialsform .modal-footer').show();
             $('#credentialsMenu').hide();
             $("#credentialsform .form-group input").each(function(){
-                if($(this)[0].id != "staticEmail"){
-                    $(this).removeAttr("readonly");
-                    $(this).attr("class", "form-control");
-                }
+                $(this).removeAttr("readonly");
+                $(this).attr("class", "form-control");
             });
+            $('#credentialsform .password-div').show();
         }
 
         function closeCredentialsForm(){
             $('#credentialsform .modal-footer').hide();
             $('#credentialsMenu').show();
             $("#credentialsform .form-group input").each(function(){
-                if($(this)[0].id != "staticEmail"){
                     $(this).attr("readonly");
                     $(this).attr("class", "form-control-plaintext");
-                }
             });
+            $('#credentialsform .password-div').hide();
 
             sendRequests();
         }
@@ -318,6 +350,7 @@
                 $('#staticFirstname').val(manager.firstname);
                 $('#staticLastname').val(manager.lastname);
                 $('#staticEmail').val(manager.email);
+                $('#oldPwd').val(manager.password);
 
             });
         }

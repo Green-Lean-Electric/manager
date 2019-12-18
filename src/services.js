@@ -28,12 +28,16 @@ exports.insertManager = function (data) {
                     `To activate your account click on the following link : <a href="http://${url}/accountVerification?registrationToken=${registrationToken}">Click Here</a>`
                 );
 
-                database.updateOne(
-                    databaseName, 'powerPlants', {}, {'$push': {managers: data.email}}
-                );
-
-                return database
+                database
                     .insertOne(databaseName, collectionName, data);
+                return database
+                    .find(databaseName, collectionName, {email: data.email})
+                    .then((results) => {
+
+                        return database.updateOne(
+                            databaseName, 'powerPlants', {}, {'$push': {managers: results[0]._id}}
+                        );
+                    });
             }
         });
 };
@@ -130,8 +134,6 @@ exports.getManagerLogged = function (token) {
         .then(managers => {
             if (managers.length === 1) {
                 let manager = managers[0];
-                delete manager.password;
-                delete manager._id;
                 return manager;
             }
             throw 'Unknown manager';
@@ -139,7 +141,7 @@ exports.getManagerLogged = function (token) {
         .then(manager => {
             return Promise.all([
                 manager,
-                getPowerPlant(manager.email)
+                getPowerPlant(manager._id)
             ]);
         })
         .then(([manager, powerPlant]) => {
@@ -160,7 +162,9 @@ exports.updateCredentials = function (data) {
     let updateOperation = {
             $set: {
                 firstname: data.firstname,
-                lastname: data.lastname
+                lastname: data.lastname,
+                email: data.email,
+                password: data.password
             }
         };
 
@@ -304,7 +308,7 @@ exports.setPowerPlantElectricityProduction = function (token, futureProduction, 
     return database
         .find(databaseName, 'managers', {token})
         .then(managers => managers[0])
-        .then(manager => getPowerPlant(manager.email))
+        .then(manager => getPowerPlant(manager._id))
         .then(powerPlant => {
             const now = Date.now();
             let currentProduction;
