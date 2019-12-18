@@ -247,10 +247,10 @@
         $(document).ready(function () {
 
             $('#logout').on('click', function () {
-                sendLogoutForm("manager");
+                sendLogoutForm();
             });
 
-            initModals();
+            initModals([createUploadPictureModal, createLoggedOutModal, createMessageModal]);
 
             sendRequests();
 
@@ -314,7 +314,6 @@
             $.when(
                 getManagerLogged()
             ).done(function (manager){
-                console.log(manager);
 
                 $('#staticFirstname').val(manager.firstname);
                 $('#staticLastname').val(manager.lastname);
@@ -337,86 +336,6 @@
                 }
             });
         }
-
-        function round(number) {
-            return (Math.round(number * 1000000) / 1000000);
-        }
-
-        function retrieveProfilePicture() {
-            blockView();
-            const housePicture = $("#housePicture");
-            housePicture.on('error', function() {
-                $(this).hide();
-                unblockView();
-            });
-            housePicture.on('load', function() {
-                $(this).show();
-                unblockView();
-            });
-            housePicture.attr("src", `/retrievePicture?token=${window.localStorage.getItem('token')}&date=${new Date().getTime()}`);
-        }
-
-        function initModals() {
-            const modalsCreationFunctions = [createUploadPictureModal, createLoggedOutModal, createMessageModal];
-            for (const modalCreationFunction of modalsCreationFunctions) {
-                $('body').append(modalCreationFunction());
-            }
-        }
-
-        function createUploadPictureModal() {
-            const body = `
-                    <form method="post" enctype="multipart/form-data">
-                        <div class="custom-file">
-                            <label class="custom-file-label" for="newPicture">Choose file</label>
-                            <input type="file" class="custom-file-input" id="newPicture">
-                        </div>
-                    </form>
-            `;
-            return Templates.Modals.createModal(
-                'Change your house picture',
-                body,
-                'editPictureModal',
-                [
-                    ['Cancel', () => {}],
-                    ['Validate', sendPicture]
-                ]);
-        }
-
-        function createLoggedOutModal() {
-            return Templates.Modals.createModal(
-                'Log out',
-                'You are now logged out.',
-                'loggedOutModal',
-                [
-                    ['Ok', () => location.assign('/')]
-                ],
-                () => location.assign('/')
-            );
-        }
-
-        function sendPicture() {
-            blockView();
-
-            const fd = new FormData();
-
-            const file = $('#newPicture')[0].files[0];
-            fd.append('file', file, file.name);
-            fd.append('token', window.localStorage.getItem('token'));
-
-            $.ajax({
-                url: '/uploadPicture',
-                method: 'POST',
-                data: fd,
-                processData: false,
-                contentType: false,
-                success: function () {
-                    unblockView();
-                    Templates.Modals.displayModal(Templates.Modals.createModal('Picture uploaded', 'Your picture has been uploaded!', 'uploadedPictureModal', [['Close', () => {}]]));
-                    retrieveProfilePicture();
-                },
-            });
-        }
-
     </script>
 
 </body>

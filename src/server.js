@@ -8,9 +8,9 @@ const port = configuration
     .port;
 
 const routes = {
-        '/managerSignUp': (_, parameters) => service.insertManager(parameters),
-        '/managerLogin': (_, parameters) => service.connectManager(parameters),
-        '/managerLogout': (_, parameters) => service.disconnectManager(parameters.token),
+        '/signUp': (_, parameters) => service.insertManager(parameters),
+        '/login': (_, parameters) => service.connectManager(parameters),
+        '/logout': (_, parameters) => service.disconnectManager(parameters.token),
         '/getManagerLogged': (_, parameters) => service.getManagerLogged(parameters.token),
         '/updateData': (_, parameters) => service.updateData(parameters),
         '/uploadPicture': (_, [parameters, picturePath]) => service.uploadManagerPicture(parameters, picturePath), //TODO put in utils ? common for prosuemr and manager

@@ -271,10 +271,10 @@
         $(document).ready(function () {
 
             $('#logout').on('click', function () {
-                sendLogoutForm("manager");
+                sendLogoutForm();
             });
 
-            initModals();
+            initModals([createLoggedOutModal, createMessageModal]);
 
             sendRequests();
 
@@ -296,7 +296,6 @@
                 getManagerLogged(),
                 getProsumers(),
             ).done(function (manager, prosumers){
-                console.log(manager);
             });
         }
 
@@ -323,16 +322,15 @@
                 dataType: 'json',
                 success: function (prosumers) {
                     if (!$.isEmptyObject(prosumers)) {
-                        console.log(prosumers);
-                        prosumers.forEach(function(item){console.log(item);
+                        prosumers.forEach(function(item){
                             var htmlProsumer = $( "<tr>"
                                 + "<td>" + item.email + "</td>"
                                 + "<td>" + item.bufferFilling + "</td>"
                                 + "<td>"
                                     + "<i class=\"fas fa-circle " + (item.token == null ? "text-danger" : "text-success") +"\"></i>"
                                 +"</td>"
-                                + "<td>" + round(item.production) + "</td>"
-                                + "<td>" + round(item.consumption) + "</td>"
+                                + "<td>" + round(item.production, 1000) + "</td>"
+                                + "<td>" + round(item.consumption, 1000) + "</td>"
                                 + (item.blackOut ?
                                     "<td style=\"background: black; color: red; font-weight: bold; text-align: center;\">Black Out</td>"
                                 : 
@@ -377,7 +375,7 @@
                     dataType: 'json',
                     contentType: 'application/json',
                     data: JSON.stringify(data),
-                    success: function (response) {console.log(response);
+                    success: function (response) {
                         if (JSON.parse(response)) {
                             Templates.Modals.displayModal(createMessageModal("Messsage","Prosumer Blocked", "prosumerBlocked"));
                             sendRequests();
@@ -414,29 +412,6 @@
                         }
                     }
                 });
-        }
-
-        function round(number) {
-            return (Math.round(number * 1000000) / 1000000);
-        }
-
-        function initModals() {
-            const modalsCreationFunctions = [createLoggedOutModal, createMessageModal];
-            for (const modalCreationFunction of modalsCreationFunctions) {
-                $('body').append(modalCreationFunction());
-            }
-        }
-
-        function createLoggedOutModal() {
-            return Templates.Modals.createModal(
-                'Log out',
-                'You are now logged out.',
-                'loggedOutModal',
-                [
-                    ['Ok', () => location.assign('/')]
-                ],
-                () => location.assign('/')
-            );
         }
 
     </script>

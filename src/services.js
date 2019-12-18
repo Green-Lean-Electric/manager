@@ -40,7 +40,6 @@ exports.insertManager = function (data) {
 };
 
 exports.accountVerification = function (registrationToken) {
-    console.log(registrationToken);
     const databaseName = DATABASE_NAME;
     const collectionName = 'managers';
     const updateOperation = {$unset: {"registrationToken": ""}};
@@ -86,8 +85,6 @@ exports.connectManager = function (data) {
             }
             return {};
         }).then((results) => {
-
-            console.log(results);
 
             if (!Object.keys(results).length)
                 return {error: "Login was unsuccessful, please check your email and password"};
@@ -256,7 +253,7 @@ exports.blockProsumer = function (data) {
                 return database
                     .find(databaseName, collectionName, {email: data.prosumerID})
                     .then((prosumer) => {
-                        console.log(prosumer[0].email);
+
                         var updateOperation = {
                             $set: {
                                 initBlockedTime: Date.now(),

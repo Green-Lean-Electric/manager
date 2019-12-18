@@ -414,16 +414,13 @@
 <script src="js/green-lean-electrics.js"></script>
 
 <script>
-    Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
-    Chart.defaults.global.defaultFontColor = '#858796';
-
     $(document).ready(function () {
 
         $('#logout').on('click', function () {
-            sendLogoutForm("manager");
+            sendLogoutForm();
         });
 
-        initModals();
+        initModals([createLoggedOutModal, createMessageModal]);
 
         sendRequests();
 
@@ -565,7 +562,7 @@
             url: '/getManagerLogged?token=' + window.localStorage.getItem('token'),
             dataType: 'json',
             success: function (manager) {
-                console.log(manager);
+
                 if ($.isEmptyObject(manager)) {
                     window.location = "index.html";
                 } else {
@@ -628,7 +625,7 @@
             url: '/getMarket',
             dataType: 'json',
             success: function (market) {
-                if (market) {console.log(market);
+                if (market) {
                     $('#currentMarketDemand').html(round(market.demand || 0, 10000) + " W");
                     $('#currentMarketPrice').attr("title", "Advice : " + market.computedPrice + " SEK/kwh");
                     $('#currentMarketPrice').val(market.actualPrice);
@@ -636,10 +633,6 @@
                 }
             }
         });
-    }
-
-    function round(number, howmuch) {
-        return (Math.round(number * howmuch) / howmuch);
     }
 
     function drawProductionPieChart(pchart_buffer_percent, pchart_market_percent, electricityProduction) {
@@ -660,46 +653,10 @@
                     hoverBorderColor: "rgba(234, 236, 244, 1)",
                 }],
             },
-            options: {
-                maintainAspectRatio: false,
-                tooltips: {
-                    backgroundColor: "rgb(255,255,255)",
-                    bodyFontColor: "#858796",
-                    borderColor: '#dddfeb',
-                    borderWidth: 1,
-                    xPadding: 15,
-                    yPadding: 15,
-                    displayColors: false,
-                    caretPadding: 10,
-                },
-                legend: {
-                    display: false
-                },
-                cutoutPercentage: 80,
-            },
+            options: pieChartOptions,
         });
 
         return bufferFilling;
-    }
-
-    function initModals() {
-        const modalsCreationFunctions = [createLoggedOutModal, createMessageModal];
-        for (const modalCreationFunction of modalsCreationFunctions) {
-            $('body').append(modalCreationFunction());
-        }
-    }
-
-
-    function createLoggedOutModal() {
-        return Templates.Modals.createModal(
-            'Log out',
-            'You are now logged out.',
-            'loggedOutModal',
-            [
-                ['Ok', () => location.assign('/')]
-            ],
-            () => location.assign('/')
-        );
     }
 
 </script>
