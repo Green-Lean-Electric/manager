@@ -58,6 +58,23 @@ exports.accountVerification = function (registrationToken) {
         });
 };
 
+exports.deleteProsumerAccount = function (token, email) {
+    const databaseName = DATABASE_NAME;
+    var collectionName = 'managers';
+
+    return database.find(databaseName, collectionName, {token})
+        .then((results) => {
+            if (results.length === 1) {
+                collectionName = 'prosumers';
+                return database.deleteOne(databaseName, collectionName, {email})
+                .then(() => {
+                    console.log(`User deleted.`);
+                    return true;
+                });
+            }
+        });
+};
+
 exports.connectManager = function (data) {
     const databaseName = DATABASE_NAME;
     const collectionName = 'managers';
@@ -105,18 +122,6 @@ exports.disconnectManager = function (token) {
         .then(() => {
             console.log(`User connected with token '${token}' has been disconnected`);
             return token;
-        });
-};
-
-exports.deleteAccount = function (token) {
-    const databaseName = DATABASE_NAME;
-    const collectionName = 'managers';
-
-    return database
-        .deleteOne(databaseName, collectionName, {token})
-        .then(() => {
-            console.log(`User deleted.`);
-            return true;
         });
 };
 

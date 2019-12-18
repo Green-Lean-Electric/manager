@@ -157,17 +157,6 @@
                                         </div>
                                     </div>
                                 </div>
-
-                                <div class="col-xl-12 col-md-12 mb-4">
-                                    <div class="card shadow">
-                                        <a onclick="deleteAccount()" class="btn btn-danger btn-icon-split" style="color: #fff; cursor: pointer;">
-                                            <span class="icon text-white-50" style="background: transparent;">
-                                                <i class="fas fa-trash"></i>
-                                            </span>
-                                            <span class="text">Delete Account</span>
-                                        </a>
-                                    </div>
-                                </div>
                             </div>
                         </div>
 
@@ -321,90 +310,15 @@
             sendRequests();
         }
 
-        function deleteAccount() {
-             var data = {
-                token: window.localStorage.getItem('token')
-            };
-
-            $.ajax({
-                    method: 'DELETE',
-                    url: '/deleteAccount',
-                    dataType: 'json',
-                    contentType: 'application/json',
-                    data: JSON.stringify(data),
-                    success: function (response) {
-                        if (response) {
-                            Templates.Modals.displayModal($('#deleteAccountModal'));
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
-                });
-        }
-
         function sendRequests() {
             $.when(
-                getManagerLogged(),
-                //getProsumerElectricityConsumption(),
-                //getWindSpeed(),
-                //getCurrentElectricityPrice(),
-                //getElectricityProduction()
-            ).done(function (manager){//, electricityConsumption, windSpeed, electricityPrice, electricityProduction) {
+                getManagerLogged()
+            ).done(function (manager){
                 console.log(manager);
 
                 $('#staticFirstname').val(manager.firstname);
                 $('#staticLastname').val(manager.lastname);
                 $('#staticEmail').val(manager.email);
-
-                /*var currentBufferFilling = round(('bufferFilling' in prosumer[0] ? prosumer[0].bufferFilling : 0));
-                $('#bufferFilling').html(currentBufferFilling);
-                $("#bufferFillingBar").width(currentBufferFilling + "%");
-
-                var netProduction = electricityProduction[0] - electricityConsumption[0].electricityConsumption;
-                $('#netProduction').html(round(netProduction) + " kwh");
-
-                var productionRatioBuffer = prosumer[0].productionRatioBuffer;
-                var productionRatioMarket = prosumer[0].productionRatioMarket;
-                var consumptionRatioBuffer = prosumer[0].consumptionRatioBuffer;
-                var consumptionRatioMarket = prosumer[0].consumptionRatioMarket;
-
-                $('#productionRatioBuffer').val(productionRatioBuffer * 100);
-                $('#productionRatioMarket').val(productionRatioMarket * 100);
-                $('#consumptionRatioBuffer').val(consumptionRatioBuffer * 100);
-                $('#consumptionRatioMarket').val(consumptionRatioMarket * 100);
-
-                $('#netProduction').html(round(netProduction) + " kwh");
-
-                var addToBuffer = drawProductionPieChart(productionRatioBuffer, productionRatioMarket, electricityConsumption[0].electricityConsumption, electricityProduction[0], netProduction);
-
-                var removeFromBuffer = drawConsumptionPieChart(consumptionRatioBuffer, consumptionRatioMarket, electricityConsumption[0].electricityConsumption, electricityProduction[0], netProduction);
-                console.log(addToBuffer);
-                console.log(removeFromBuffer);
-                var newBufferFilling = currentBufferFilling + addToBuffer - removeFromBuffer;
-                if (newBufferFilling > 100) {
-                    newBufferFilling == 100
-                }
-
-                var data = {
-                    bufferFilling: newBufferFilling,
-                    token: window.localStorage.getItem('token')
-                };
-
-                $.ajax({
-                    method: 'POST',
-                    url: '/updateData',
-                    dataType: 'json',
-                    contentType: 'application/json',
-                    data: JSON.stringify(data),
-                    success: function (response) {
-                        if (JSON.parse(response)) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
-                });*/
 
             });
         }
@@ -443,7 +357,7 @@
         }
 
         function initModals() {
-            const modalsCreationFunctions = [createUploadPictureModal, createLoggedOutModal, createMessageModal, createDeleteAccountModal];
+            const modalsCreationFunctions = [createUploadPictureModal, createLoggedOutModal, createMessageModal];
             for (const modalCreationFunction of modalsCreationFunctions) {
                 $('body').append(modalCreationFunction());
             }
@@ -473,18 +387,6 @@
                 'Log out',
                 'You are now logged out.',
                 'loggedOutModal',
-                [
-                    ['Ok', () => location.assign('/')]
-                ],
-                () => location.assign('/')
-            );
-        }
-
-        function createDeleteAccountModal() {
-            return Templates.Modals.createModal(
-                'Account Deleted',
-                'Your  account was well deleted.',
-                'deleteAccountModal',
                 [
                     ['Ok', () => location.assign('/')]
                 ],
