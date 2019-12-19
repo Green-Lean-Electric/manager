@@ -133,8 +133,7 @@ exports.getManagerLogged = function (token) {
         .find(databaseName, collectionName, {token})
         .then(managers => {
             if (managers.length === 1) {
-                let manager = managers[0];
-                return manager;
+                return managers[0];
             }
             throw 'Unknown manager';
         })
