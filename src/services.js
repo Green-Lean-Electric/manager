@@ -15,7 +15,7 @@ exports.insertManager = function (data) {
 
     return database
         .find(databaseName, collectionName, {email: data.email})
-        .then((results) => {
+        .then(results => {
             if (results.length >= 1) {
                 console.log("This email is already used.");
                 return {error: "This email is already used."};
@@ -28,16 +28,15 @@ exports.insertManager = function (data) {
                     `To activate your account click on the following link : <a href="http://${url}/accountVerification?registrationToken=${registrationToken}">Click Here</a>`
                 );
 
-                database
-                    .insertOne(databaseName, collectionName, data);
-                return database
-                    .find(databaseName, collectionName, {email: data.email})
-                    .then((results) => {
-
-                        return database.updateOne(
-                            databaseName, 'powerPlants', {}, {'$push': {managers: results[0]._id}}
-                        );
-                    });
+                return database.insertOne(databaseName, collectionName, data).then(
+                    () =>
+                        database
+                            .find(databaseName, collectionName, {email: data.email})
+                            .then(manager =>
+                                database.updateOne(
+                                    databaseName, 'powerPlants', {}, {'$push': {managers: manager[0]._id}}
+                                ))
+                )
             }
         });
 };
@@ -69,10 +68,10 @@ exports.deleteProsumerAccount = function (token, email) {
             if (results.length === 1) {
                 collectionName = 'prosumers';
                 return database.deleteOne(databaseName, collectionName, {email})
-                .then(() => {
-                    console.log(`User deleted.`);
-                    return true;
-                });
+                    .then(() => {
+                        console.log(`User deleted.`);
+                        return true;
+                    });
             }
         });
 };
@@ -159,13 +158,13 @@ exports.updateCredentials = function (data) {
     delete data.token;
 
     let updateOperation = {
-            $set: {
-                firstname: data.firstname,
-                lastname: data.lastname,
-                email: data.email,
-                password: data.password
-            }
-        };
+        $set: {
+            firstname: data.firstname,
+            lastname: data.lastname,
+            email: data.email,
+            password: data.password
+        }
+    };
 
     return database
         .updateOne(databaseName, collectionName, {token}, updateOperation)
@@ -185,11 +184,11 @@ exports.updateProsumerCredentials = function (data) {
 
     const token = data.token;
     let updateOperation = {
-            $set: {
-                email: data.email,
-                password: data.password
-            }
-        };
+        $set: {
+            email: data.email,
+            password: data.password
+        }
+    };
 
     return database.find(databaseName, collectionName, {token})
         .then((results) => {
@@ -198,10 +197,10 @@ exports.updateProsumerCredentials = function (data) {
                 var email = data.oldemail;
 
                 return database.updateOne(databaseName, collectionName, {email}, updateOperation)
-                .then(() => {
-                    console.log(`User credentials updated.`);
-                    return true;
-                });
+                    .then(() => {
+                        console.log(`User credentials updated.`);
+                        return true;
+                    });
             } else {
                 console.log(`User not found or data already with the same values`);
                 return {};
