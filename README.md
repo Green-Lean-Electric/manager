@@ -1,26 +1,19 @@
-# Manager Project
+# Manager project
 
-The Manager project includes the interface and API for the power plant manager will use in the Green Lean Electrics Project (```https://github.com/Green-Lean-Electric```). 
-Thanks to that the manager can control the power plant production and the market demand (all prosumers demand). He can also manage the prosumer of wich he's responsible. 
+The Manager project includes the web interface and the API for the power plant the manager will use in the Green Lean Electrics project (https://github.com/Green-Lean-Electric).  
+The manager can control the power plant production and the market demand (all prosumers demands). He can also manage the prosumers. 
 
-## Online Usage
+## Online usage
 
-You can use our project on our server with the following links :
-
-Manager ```http://145.239.75.80:8082/```
-
-Prosumer ```http://145.239.75.80:8081/``` 
+You can try this project on our server following this link: http://145.239.75.80:8082/
 
 ## Installation
 
-Download and install Node.js version 12 or higher. Lower versions may not work due to advanced JavaScript features. 
-
+Download and install Node.js version 12 or higher. Lower versions may not work due to advanced JavaScript features.  
 Download and install on localhost MongoDB version 4 or higher. Default port should be 27017.
 
-Clone all projects repositories (Simulator, Prosumer, Manager & Utils)
-
-Inside each project run 
-
+Clone all projects repositories (Simulator, Prosumer, Manager & Utils).  
+Inside each project run the following command:
 ```bash
 npm install
 ```
@@ -50,8 +43,6 @@ However, if you only have a Windows computer, you need a few more steps to activ
 
 ## Other Projects Linked to this one
 
-Simulator ```https://github.com/Green-Lean-Electric/simulator```
-
-Prosumer ```https://github.com/Green-Lean-Electric/prosumer```
-
-Utils ```https://github.com/Green-Lean-Electric/utils```
+Simulator: https://github.com/Green-Lean-Electric/simulator  
+Prosumer: https://github.com/Green-Lean-Electric/prosumer  
+Utils: https://github.com/Green-Lean-Electric/utils
