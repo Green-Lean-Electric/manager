@@ -18,7 +18,7 @@ exports.insertManager = function (data) {
                 console.log("This email is already used.");
                 return {error: "This email is already used."};
             } else {
-                const url = `${configuration.serversConfiguration.prosumer.hostname}:${configuration.serversConfiguration.prosumer.port}`;
+                const url = `${configuration.serversConfiguration.manager.hostname}:${configuration.serversConfiguration.manager.port}`;
                 server.sendEmail(
                     'no-reply@greenleanelectric.com',
                     data.email,
