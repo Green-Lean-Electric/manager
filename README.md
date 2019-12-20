@@ -5,7 +5,7 @@ Thanks to that the manager can control the power plant production and the market
 
 ## Online Usage
 
-You can use our project on our serveur with the following links :
+You can use our project on our server with the following links :
 
 Manager ```http://145.239.75.80:8082/```
 
