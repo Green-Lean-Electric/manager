@@ -1,34 +1,57 @@
-# Manager
-Basic functionality
+# Manager Project
 
-The Manager application has functionalities similar to the Prosumer. A Manager should be able to:
+The Manager project includes the interface and API for the power plant manager will use in the Green Lean Electrics Project (```https://github.com/Green-Lean-Electric```). 
+Thanks to that the manager can control the power plant production and the market demand (all prosumers demand). He can also manage the prosumer of wich he's responsible. 
 
-Through a profile page update credentials and delete his/her account. A picture of the Manager must be uploaded and shown in the profile
-See and control the Coal Power plant’s electricity production
-See the Coal Power plant’s status: starting, running, stopped
-When producing, control a ratio of electricity being sent to the buffer and to the market (when stopped the buffer should be used to supply the market demand)
-See the current Market demand
-Have a list of a Prosumers from which the Manager can:
-Be able to see who is online (logged in)
-Be able to view this Prosumer’s system
-Block the Prosumer from selling to the market for (10-100 seconds)
+## Online Usage
+
+You can use our project on our serveur with the following links :
+
+Manager ```http://145.239.75.80:8082/```
+
+Prosumer ```http://145.239.75.80:8081/``` 
+
+## Installation
+
+Download and install Node.js version 12 or higher. Lower versions may not work due to advanced JavaScript features. 
+
+Download and install on localhost MongoDB version 4 or higher. Default port should be 27017.
+
+Clone all projects repositories (Simulator, Prosumer, Manager & Utils)
+
+Inside each project run 
+
+```bash
+npm install
+```
+This should install Node.js dependencies we have used throughout our application.
 
 
+## Usage
 
-Advanced functionality
+You can now start the three main projects. From the root folder, launch the following commands:
 
-Here are some suggestions in order to obtain a higher grade:
 
-Add IP and port to the list of Prosumers (and other interesting/useful information e.g. last login)
-User interface is not “polling” over REST, but instead streams data over e.g. a socket
-Monitoring and displaying network delays in the system
-Introduce different useful alarms 
-Make a bot that can replace the Manager - Monitors values, redirects to buffer or market,sends messages to users etc.
-Should be able to use from multiple devices e.g. desktop and mobile (responsive)
-Should be able to use simultaneously from multiple devices
-An “notification” field or chat where messages from a Prosumer can be received
-There is a visual representation (e.g. Gauges) of the different values and graphical tools (e.g. sliders etc) for controlling the plant
-Messages from Providers can be given a priority and one could add filters for low, medium, high. Also each message has an acknowledge button. The messages must not suffer from XSS vulnerabilities etc.
-The operator can re-order the visual gauges for example using drag-n-drop
-Push-to-talk button for contacting a Prosumer over voice, or even a video function
-Perform dead reckoning of the system to save data traffic (e.g. broadcast operator commands/data to all connected to the plant and then dead reckon the state of the system. Eventual corrections with real data is needed).
+```bash
+node simulator/src/server.js
+node manager/src/server.js
+node prosumer/src/server.js
+```
+
+The servers should now be up and running and you should be able to access to your web interfaces at "localhost:8081" (prosumer interface) and "localhost:8082" (manager interface).
+
+Please note that if you test our application on a Windows computer, the registration mails can't be send. We recommend you to test it on a Unix computer. 
+
+However, if you only have a Windows computer, you need a few more steps to activate an account (manager & prosumer) after its registration:
+
+- open your localhost MongoDB "greenleanelectrics" database.
+- look for the prosumer (collection "prosumer") or the manager (collection "manager") you want to activate.
+- delete the "registrationToken" field.
+
+## Other Projects Linked to this one
+
+Simulator ```https://github.com/Green-Lean-Electric/simulator```
+
+Prosumer ```https://github.com/Green-Lean-Electric/prosumer```
+
+Utils ```https://github.com/Green-Lean-Electric/utils```
