@@ -11,10 +11,8 @@ exports.insertManager = function (data) {
     const databaseName = DATABASE_NAME;
     const collectionName = 'managers';
     const registrationToken = generateToken();
-    data.registrationToken = registrationToken;
 
-    return database
-        .find(databaseName, collectionName, {email: data.email})
+    return database.find(databaseName, collectionName, {email: data.email})
         .then(results => {
             if (results.length >= 1) {
                 console.log("This email is already used.");
@@ -29,13 +27,12 @@ exports.insertManager = function (data) {
                 );
 
                 return database.insertOne(databaseName, collectionName, data).then(
-                    () =>
-                        database
-                            .find(databaseName, collectionName, {email: data.email})
-                            .then(manager =>
-                                database.updateOne(
-                                    databaseName, 'powerPlants', {}, {'$push': {managers: manager[0]._id}}
-                                ))
+                    () => database
+                        .find(databaseName, collectionName, {email: data.email})
+                        .then(manager =>
+                            database.updateOne(
+                                databaseName, 'powerPlants', {}, {'$push': {managers: manager[0]._id}}
+                            ))
                 )
             }
         });

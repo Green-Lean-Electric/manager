@@ -365,7 +365,7 @@
                 dataType: 'json',
                 success: function (prosumers) {
                     if (!$.isEmptyObject(prosumers)) {
-                        prosumers.forEach(function(item){console.log(item);
+                        prosumers.forEach(function(item){
                             var htmlProsumer = $( "<tr>"
                                 + "<td>" + item.email + "</td>"
                                 + "<td>" + item.bufferFilling + "</td>"
