@@ -8,7 +8,7 @@ const port = configuration
     .port;
 
 const routes = {
-        '/signUp': (_, parameters) => service.insertManager(parameters),
+        '/signUp': (_, parameters) => service.insertManager(parameters.email, parameters.password),
         '/login': (_, parameters) => service.connectManager(parameters),
         '/logout': (_, parameters) => service.disconnectManager(parameters.token),
         '/getManagerLogged': (_, parameters) => service.getManagerLogged(parameters.token),

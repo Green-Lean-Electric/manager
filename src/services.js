@@ -7,12 +7,14 @@ const configuration = require('../../utils/src/configuration');
 
 const DATABASE_NAME = 'greenleanelectrics';
 
-exports.insertManager = function (data) {
+exports.insertManager = function (email, password) {
     const databaseName = DATABASE_NAME;
     const collectionName = 'managers';
     const registrationToken = generateToken();
 
-    return database.find(databaseName, collectionName, {email: data.email})
+    const manager = {email, password, registrationToken};
+
+    return database.find(databaseName, collectionName, {email: email})
         .then(results => {
             if (results.length >= 1) {
                 console.log("This email is already used.");
@@ -21,14 +23,14 @@ exports.insertManager = function (data) {
                 const url = `${configuration.serversConfiguration.manager.hostname}:${configuration.serversConfiguration.manager.port}`;
                 server.sendEmail(
                     'no-reply@greenleanelectric.com',
-                    data.email,
+                    email,
                     'Account Verification',
                     `To activate your account click on the following link : <a href="http://${url}/accountVerification?registrationToken=${registrationToken}">Click Here</a>`
                 );
 
-                return database.insertOne(databaseName, collectionName, data).then(
+                return database.insertOne(databaseName, collectionName, manager).then(
                     () => database
-                        .find(databaseName, collectionName, {email: data.email})
+                        .find(databaseName, collectionName, {email: email})
                         .then(manager =>
                             database.updateOne(
                                 databaseName, 'powerPlants', {}, {'$push': {managers: manager[0]._id}}
